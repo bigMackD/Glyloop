@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$primary  : mat.define-palette(mat.$indigo-palette, 500, 300, 700);
+$secondary: mat.define-palette(mat.$pink-palette, 500, 300, 700);
+$tertiary : mat.define-palette(mat.$deep-purple-palette, 500, 300, 700);
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary  : $primary,
+    secondary: $secondary,
+    tertiary : $tertiary,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0
+));
+
+@include mat.all-component-themes($dark-theme);

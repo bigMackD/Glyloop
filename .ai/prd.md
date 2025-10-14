@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD) - Glyloop
 ## 1. Product Overview
-Glyloop is a desktop-first web application for adults living with Type 1 Diabetes who use Dexcom CGM. The MVP focuses on a tight daily loop: view current CGM glucose, log events (food, insulin, exercise, notes), and review their impact on an interactive time-series chart. MVP ships with Dexcom Sandbox as the only data source; Nightscout integration and data export arrive post-MVP. The app is containerized and delivered via Docker with a lightweight deployment setup.
+Glyloop is a desktop-first web application for adults living with Type 1 Diabetes who use Dexcom CGM. The MVP focuses on a tight daily loop: view current CGM glucose, log events (food, insulin, exercise, notes), and review their impact on an interactive time-series chart. MVP uses Dexcom Sandbox as the only external data source, with all user events stored locally in PostgreSQL; Nightscout integration and data export arrive post-MVP. The app is containerized and delivered via Docker with a lightweight deployment setup.
 
 Key constraints and principles:
 - Platform: Web app only, desktop-first, always-on dark mode.

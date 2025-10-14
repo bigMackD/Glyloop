@@ -1,0 +1,32 @@
+{
+    "root": true,
+    "ignorePatterns": ["projects/**/*"],
+    "overrides": [
+      {
+        "files": ["*.ts"],
+        "extends": [
+          "eslint:recommended",
+          "plugin:@angular-eslint/recommended",
+          "plugin:@angular-eslint/template/process-inline-templates",
+          "plugin:@typescript-eslint/recommended",
+          "prettier"
+        ],
+        "parserOptions": {
+          "project": ["tsconfig.json"],
+          "sourceType": "module"
+        },
+        "rules": {
+          "@typescript-eslint/no-unused-vars": ["warn"],
+          "no-console": "off",
+          "quotes": ["error", "single"],
+          "semi": ["error", "always"]
+        }
+      },
+      {
+        "files": ["*.html"],
+        "extends": ["plugin:@angular-eslint/template/recommended"],
+        "rules": {}
+      }
+    ]
+  }
+  
