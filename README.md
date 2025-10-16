@@ -34,7 +34,7 @@ For full context and user stories, see the PRD at `.ai/prd.md`.
   - CQRS and Domain-Driven Design
   - JWT auth with secure cookie sessions and CSRF for state changes
 - Data and Integrations
-  - Dexcom Sandbox API (OAuth/PKCE, 5-minute polling)
+  - Dexcom Sandbox API (OAuth, 5-minute polling)
   - PostgreSQL (primary database)
   - Future: Nightscout (post-MVP)
 - DevOps and CI/CD
@@ -73,7 +73,7 @@ dotnet run
 
 Configure API settings as needed:
 - Database connection string (PostgreSQL)
-- Dexcom Sandbox OAuth/PKCE credentials
+- Dexcom Sandbox OAuth credentials
 - Security settings (JWT, cookie, CSRF)
 These typically live in `appsettings.Development.json`, `appsettings.json`, or environment variables.
 
@@ -94,7 +94,7 @@ In `Glyloop.Client/glyloop-web/package.json`:
 ## Project scope
 
 In scope for MVP:
-- Dexcom Sandbox linking (OAuth/PKCE), 5-minute polling, resilient sync with backoff and token refresh.
+- Dexcom Sandbox linking (OAuth), 5-minute polling, resilient sync with backoff and token refresh.
 - Event logging for Food, Insulin (fast/long), Exercise, Notes with validation and overlays.
 - +2h outcome for Food with strict ±5-minute tolerance.
 - TIR calculation for the active chart window with one editable range (default 70–180 mg/dL).
