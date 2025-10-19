@@ -1,0 +1,41 @@
+using System.Reflection;
+using FluentValidation;
+using Glyloop.Application.Common.Behaviors;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Glyloop.Application;
+
+/// <summary>
+/// Extension methods for registering Application layer dependencies.
+/// Registers MediatR with pipeline behaviors and FluentValidation validators.
+/// </summary>
+public static class DependencyInjection
+{
+    /// <summary>
+    /// Adds Application layer services to the dependency injection container.
+    /// Order of behaviors matters: Logging → Validation
+    /// Note: Authentication is handled at the API layer via [Authorize] attribute.
+    /// </summary>
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+
+        // Register MediatR with pipeline behaviors (order matters!)
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(assembly);
+            
+            // Outermost: logs everything including errors
+            config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            
+            // Validates before processing
+            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
+
+        // Register all FluentValidation validators from this assembly
+        services.AddValidatorsFromAssembly(assembly);
+
+        return services;
+    }
+}
+
