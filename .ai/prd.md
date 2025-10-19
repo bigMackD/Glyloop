@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD) - Glyloop
 ## 1. Product Overview
-Glyloop is a desktop-first web application for adults living with Type 1 Diabetes who use Dexcom CGM. The MVP focuses on a tight daily loop: view current CGM glucose, log events (food, insulin, exercise, notes), and review their impact on an interactive time-series chart. MVP ships with Dexcom Sandbox as the only data source; Nightscout integration and data export arrive post-MVP. The app is containerized and delivered via Docker with a lightweight deployment setup.
+Glyloop is a desktop-first web application for adults living with Type 1 Diabetes who use Dexcom CGM. The MVP focuses on a tight daily loop: view current CGM glucose, log events (food, insulin, exercise, notes), and review their impact on an interactive time-series chart. MVP uses Dexcom Sandbox as the only external data source, with all user events stored locally in PostgreSQL; Nightscout integration and data export arrive post-MVP. The app is containerized and delivered via Docker with a lightweight deployment setup.
 
 Key constraints and principles:
 - Platform: Web app only, desktop-first, always-on dark mode.
@@ -16,7 +16,7 @@ People with T1D need a fast, reliable way to see current glucose, log key daily 
 
 ## 3. Functional Requirements
 3.1 Data source and sync
-- Dexcom Sandbox OAuth/PKCE link flow.
+- Dexcom Sandbox OAuth link flow.
 - Polling cadence every 5 minutes.
 - Backoff strategy on 429/5xx: exponential 2x with jitter up to 30 minutes.
 - Token handling: proactive refresh at 80% of TTL; encrypted at rest; rotation every 90 days or upon 401 bursts; revoke and relink capability.
@@ -27,7 +27,7 @@ People with T1D need a fast, reliable way to see current glucose, log key daily 
 - Units: canonical mg/dL; display in mg/dL (no unit switching in MVP).
 - Event types and fields:
   - Food: carbs_g (required), meal_tag, absorption_hint, note.
-  - Insulin fast/long: insulin_units (required), preparation, delivery, timing, note.
+  - Insulin: insulin_type (fast|long, required), insulin_units (required), preparation, delivery, timing, note.
   - Exercise: type, duration_min, intensity, start_time.
   - Notes: free text up to 500 chars.
 - Numeric bounds: carbs 0–300 g; insulin 0–100 U in 0.5 U steps; duration 1–300 min.
@@ -107,7 +107,7 @@ US-003
 Title: Link Dexcom Sandbox  
 Description: As a user, I want to link my Dexcom Sandbox account so Glyloop can import my CGM data.  
 Acceptance Criteria:  
-- The app uses OAuth/PKCE for Dexcom Sandbox.  
+- The app uses OAuth for Dexcom Sandbox.  
 - On success, the Data Sources screen shows linked status.  
 - On failure, I see an actionable error.
 

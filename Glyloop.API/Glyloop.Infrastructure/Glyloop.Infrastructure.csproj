@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- EF Core and PostgreSQL -->
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        
+        <!-- ASP.NET Core Identity -->
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.0" />
+        
+        <!-- MediatR for domain events -->
+        <PackageReference Include="MediatR" Version="12.2.0" />
+        
+        <!-- Data Protection -->
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="8.0.0" />
+        
+        <!-- Polly for resilience -->
+        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Domain project reference -->
+        <ProjectReference Include="..\Glyloop.Domain\Glyloop.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,13 @@
+/* Tailwind reset first */
+@tailwind base;
+
+/* Then Material theme so its component CSS lands early */
+@use './styles/material-theme' as *;
+
+/* Then Tailwind layers so utilities can override locally */
+@tailwind components;
+@tailwind utilities;
+
+/* Optional app background */
+:root { --color-bg: #0E0E10; }
+html, body { height: 100%; background: var(--color-bg); }
