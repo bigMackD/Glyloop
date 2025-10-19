@@ -177,16 +177,23 @@ Glyloop.Domain/Services/
    - Will be defined when Application layer queries are implemented
    - Likely stored as read-only projections/views for charting and TIR calculations
 
-3. **User Preferences**: ✅ **TirRange remains a Value Object**
+3. **User Identity Integration**: ✅ **ApplicationUser in Infrastructure layer**
+   - Domain uses `UserId` value object (Guid wrapper) - no Identity types in Domain
+   - Infrastructure defines `ApplicationUser` extending `IdentityUser<Guid>`
+   - `ApplicationUser` has custom properties: `CreatedAt`, `LastLoginAt`
+   - Navigation properties (`DexcomLinks`, `Events`) for Infrastructure queries only
+   - Maintains clean separation: Domain testable without Identity framework
+
+4. **User Preferences**: ✅ **TirRange remains a Value Object**
    - Current approach is sufficient for MVP
    - If preferences expand (e.g., notification settings, display units), consider creating a lightweight `UserPreference` aggregate
 
-4. **Token Encryption**: ✅ **ITokenEncryptionService in Infrastructure layer**
+5. **Token Encryption**: ✅ **ITokenEncryptionService in Infrastructure layer**
    - Domain stores `byte[]` (persistence-agnostic)
    - Infrastructure provides `ITokenEncryptionService` implementation
    - Application command handlers inject the service to encrypt/decrypt before passing to domain
 
-5. **Token Refresh for MVP**: ✅ **No background worker**
+6. **Token Refresh for MVP**: ✅ **No background worker**
    - Manual refresh via API endpoint for MVP
    - Future enhancement: Background worker (Hangfire/Quartz) for automatic refresh
    - Domain `DexcomLink.RefreshTokens()` method ready for both manual and automated scenarios

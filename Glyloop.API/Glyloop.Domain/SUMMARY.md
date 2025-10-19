@@ -299,6 +299,10 @@ Glyloop.Domain/
 ## Notes & Trade-offs
 
 1. **ASP.NET Identity Integration**: User is NOT modeled as a domain aggregate. Instead, `UserId` serves as a lightweight reference. This keeps the domain decoupled from identity infrastructure.
+   - Infrastructure layer defines `ApplicationUser` extending `IdentityUser<Guid>`
+   - Domain only knows about `UserId` value object (Guid wrapper)
+   - No Identity types (UserManager, SignInManager, etc.) in Domain layer
+   - Clear separation: Domain remains persistence-agnostic and testable
 
 2. **Token Encryption**: Encryption is handled in the Infrastructure layer. Domain stores `byte[]` but doesn't know encryption implementation.
 

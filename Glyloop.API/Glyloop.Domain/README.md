@@ -144,8 +144,10 @@ Glyloop.Domain/
 **Purpose**: User registration, authentication, and basic preferences.
 
 **Integration Point**: `UserId` value object
-- The `User` entity is managed by ASP.NET Core Identity (`IdentityUser`)
-- Domain references users via `UserId` (Guid) to remain infrastructure-independent
+- The `User` entity is managed by ASP.NET Core Identity (`ApplicationUser` extending `IdentityUser<Guid>`)
+- Domain references users via `UserId` (Guid wrapper) to remain infrastructure-independent
+- Infrastructure layer defines `ApplicationUser` with Guid keys and custom properties
+- No Identity types leak into Domain layer
 - User preferences (TIR range) may be managed via a lightweight `UserPreference` aggregate in the future
 
 ## Key Design Patterns
@@ -245,16 +247,24 @@ public Result RefreshTokens(byte[] newToken, ...)
 
 The Domain layer is persistence-agnostic. Here are hints for Infrastructure layer mapping:
 
+### ApplicationUser (Infrastructure Entity)
+- **Purpose**: Custom Identity user extending `IdentityUser<Guid>`
+- **Table**: `AspNetUsers` (managed by Identity)
+- **Additional Properties**: `CreatedAt`, `LastLoginAt`
+- **Navigation**: Collections for `DexcomLinks` and `Events` (Infrastructure queries only)
+- **Domain Integration**: Domain uses `UserId` value object; Infrastructure maps to `ApplicationUser.Id`
+
 ### DexcomLink
 - **Table**: `DexcomLinks`
-- **`EncryptedAccessToken`**, **`EncryptedRefreshToken`**: `VARBINARY(MAX)` or equivalent
-- **`TokenExpiresAt`**, **`LastRefreshedAt`**: `DATETIMEOFFSET` (preserves UTC offset)
+- **`EncryptedAccessToken`**, **`EncryptedRefreshToken`**: `BYTEA` (PostgreSQL) or `VARBINARY(MAX)` (SQL Server)
+- **`TokenExpiresAt`**, **`LastRefreshedAt`**: `TIMESTAMPTZ` (PostgreSQL) or `DATETIMEOFFSET` (SQL Server)
+- **`UserId`**: `Guid` FK to `AspNetUsers.Id` (ApplicationUser)
 - **Index**: `UserId` for efficient user-based queries
-- **Constraint**: Unique constraint on `UserId` if only one active link per user
+- **Constraint**: Optional unique constraint on `UserId` if only one active link per user
 
 ### Value Objects
 - **`TirRange`**: Owned entity type (complex type) or separate columns (`TirLower`, `TirUpper`)
-- **`UserId`**: `Guid` FK to `AspNetUsers.Id`
+- **`UserId`**: `Guid` mapped from/to domain value object ↔ ApplicationUser.Id
 - **Enums**: Store as `INT` with mapping or `NVARCHAR` for readability
 
 ### Event Aggregate
@@ -333,17 +343,27 @@ return linkResult.IsSuccess
 ```
 
 ### Infrastructure Layer
+- Defines `ApplicationUser` (extends `IdentityUser<Guid>`)
 - Implements repository interfaces
-- Configures EF Core mappings
-- Handles encryption/decryption
+- Configures EF Core mappings with value converters
+- Handles encryption/decryption for OAuth tokens
 - Dispatches domain events after persistence
+- Provides `UserManager<ApplicationUser>` for upper layers
 
 ```csharp
 // In DexcomLinkRepository
-public async Task<DexcomLink?> GetByIdAsync(DexcomLinkId linkId, CancellationToken ct)
+public async Task<DexcomLink?> GetByIdAsync(Guid linkId, CancellationToken ct)
 {
     return await _context.DexcomLinks
         .FirstOrDefaultAsync(l => l.Id == linkId, ct);
+}
+
+// ApplicationUser is Infrastructure concern, not exposed to Domain
+public class ApplicationUser : IdentityUser<Guid>
+{
+    public DateTimeOffset CreatedAt { get; set; }
+    public ICollection<DexcomLink> DexcomLinks { get; set; }
+    public ICollection<Event> Events { get; set; }
 }
 ```
 
