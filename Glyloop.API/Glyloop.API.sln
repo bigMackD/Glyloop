@@ -8,6 +8,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glyloop.Domain", "Glyloop.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glyloop.Infrastructure", "Glyloop.Infrastructure\Glyloop.Infrastructure.csproj", "{A9CBD0CB-2116-4D68-AC0F-2A04D5A98F9D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3180AE1A-881A-4C12-9672-7DDAE1063F45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glyloop.API.Tests", "Tests\Glyloop.API.Tests\Glyloop.API.Tests.csproj", "{8AA31F51-7210-42F3-922B-510D9120872C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glyloop.Application.Tests", "Tests\Glyloop.Application.Tests\Glyloop.Application.Tests.csproj", "{4AEBF130-2282-49C6-A9F9-CDE666376723}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glyloop.Domain.Tests", "Tests\Glyloop.Domain.Tests\Glyloop.Domain.Tests.csproj", "{412107B5-7944-46FC-A08A-DD7A348E3124}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glyloop.Infrastructure.Tests", "Tests\Glyloop.Infrastructure.Tests\Glyloop.Infrastructure.Tests.csproj", "{224452C9-0C4A-4676-BF08-388B31921B78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +40,27 @@ Global
 		{A9CBD0CB-2116-4D68-AC0F-2A04D5A98F9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9CBD0CB-2116-4D68-AC0F-2A04D5A98F9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9CBD0CB-2116-4D68-AC0F-2A04D5A98F9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AA31F51-7210-42F3-922B-510D9120872C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AA31F51-7210-42F3-922B-510D9120872C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AA31F51-7210-42F3-922B-510D9120872C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AA31F51-7210-42F3-922B-510D9120872C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AEBF130-2282-49C6-A9F9-CDE666376723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AEBF130-2282-49C6-A9F9-CDE666376723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AEBF130-2282-49C6-A9F9-CDE666376723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AEBF130-2282-49C6-A9F9-CDE666376723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{412107B5-7944-46FC-A08A-DD7A348E3124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{412107B5-7944-46FC-A08A-DD7A348E3124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{412107B5-7944-46FC-A08A-DD7A348E3124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{412107B5-7944-46FC-A08A-DD7A348E3124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{224452C9-0C4A-4676-BF08-388B31921B78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{224452C9-0C4A-4676-BF08-388B31921B78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{224452C9-0C4A-4676-BF08-388B31921B78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{224452C9-0C4A-4676-BF08-388B31921B78}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8AA31F51-7210-42F3-922B-510D9120872C} = {3180AE1A-881A-4C12-9672-7DDAE1063F45}
+		{4AEBF130-2282-49C6-A9F9-CDE666376723} = {3180AE1A-881A-4C12-9672-7DDAE1063F45}
+		{412107B5-7944-46FC-A08A-DD7A348E3124} = {3180AE1A-881A-4C12-9672-7DDAE1063F45}
+		{224452C9-0C4A-4676-BF08-388B31921B78} = {3180AE1A-881A-4C12-9672-7DDAE1063F45}
 	EndGlobalSection
 EndGlobal

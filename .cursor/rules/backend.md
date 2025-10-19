@@ -68,6 +68,11 @@ Glyloop.Infrastructure/
   Services/          # adapters (Email, Nightscout client in future)
   Options/           # settings bindings
 
+Glyloop.Tests/ 
+  Glyloop.API.Tests/
+  Glyloop.Application.Tests/
+  Glyloop.Domain.Tests/
+  Glyloop.Infrastructure.Tests/
 
 ### Architecture rules (non-negotiable)
 Dependency direction: API → Application → Domain; Infrastructure is used only by API (via DI) and implements interfaces from Application/Domain.
