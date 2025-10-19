@@ -783,7 +783,7 @@ public interface IGlucoseReadingRepository
 ✅ **Phase 5-8 Complete When**:
 - Can exchange OAuth code for Dexcom tokens
 - Can refresh expired Dexcom tokens
-- Can fetch and store glucose readings
+- Can fetch glucose readings
 - Token encryption/decryption works end-to-end
 - ASP.NET Identity with ApplicationUser ready for upper layers
 
