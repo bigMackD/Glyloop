@@ -22,5 +22,17 @@ public class ApplicationUser : IdentityUser<Guid>
     /// Gets or sets the last time this user logged in (UTC).
     /// </summary>
     public DateTimeOffset? LastLoginAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets the lower bound of the Time in Range (TIR) target in mg/dL.
+    /// Default: 70 mg/dL
+    /// </summary>
+    public int TirLowerBound { get; set; } = 70;
+
+    /// <summary>
+    /// Gets or sets the upper bound of the Time in Range (TIR) target in mg/dL.
+    /// Default: 180 mg/dL
+    /// </summary>
+    public int TirUpperBound { get; set; } = 180;
 }
 

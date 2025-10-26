@@ -146,6 +146,12 @@ namespace Glyloop.Infrastructure.Persistence.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
+                    b.Property<int>("TirLowerBound")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TirUpperBound")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 

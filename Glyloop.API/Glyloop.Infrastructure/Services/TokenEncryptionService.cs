@@ -1,3 +1,4 @@
+using Glyloop.Application.Common.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
 using System.Text;
 
@@ -50,25 +51,5 @@ public class TokenEncryptionService : ITokenEncryptionService
         var plaintextBytes = _protector.Unprotect(ciphertext);
         return Encoding.UTF8.GetString(plaintextBytes);
     }
-}
-
-/// <summary>
-/// Interface for token encryption/decryption service.
-/// </summary>
-public interface ITokenEncryptionService
-{
-    /// <summary>
-    /// Encrypts a plaintext string into encrypted bytes.
-    /// </summary>
-    /// <param name="plaintext">The plaintext token to encrypt</param>
-    /// <returns>Encrypted token as byte array</returns>
-    byte[] Encrypt(string plaintext);
-
-    /// <summary>
-    /// Decrypts encrypted bytes back to plaintext string.
-    /// </summary>
-    /// <param name="ciphertext">The encrypted token bytes</param>
-    /// <returns>Decrypted plaintext token</returns>
-    string Decrypt(byte[] ciphertext);
 }
 

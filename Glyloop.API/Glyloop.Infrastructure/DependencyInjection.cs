@@ -1,3 +1,4 @@
+using Glyloop.Application.Common.Interfaces;
 using Glyloop.Domain.Common;
 using Glyloop.Domain.Repositories;
 using Glyloop.Infrastructure.Identity;
@@ -5,6 +6,7 @@ using Glyloop.Infrastructure.Persistence;
 using Glyloop.Infrastructure.Persistence.Repositories;
 using Glyloop.Infrastructure.Services;
 using Glyloop.Infrastructure.Services.Dexcom;
+using Glyloop.Infrastructure.Services.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -89,7 +91,7 @@ public static class DependencyInjection
         services.AddScoped<IEventRepository, EventRepository>();
 
         // Unit of Work
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<Application.Common.Interfaces.IUnitOfWork, UnitOfWork>();
     }
 
     /// <summary>
@@ -125,7 +127,7 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Registers cross-cutting services (time provider, encryption).
+    /// Registers cross-cutting services (time provider, encryption, identity).
     /// </summary>
     private static void AddServices(IServiceCollection services)
     {
@@ -138,7 +140,19 @@ public static class DependencyInjection
         services.AddDataProtection();
 
         // Token Encryption Service
-        services.AddScoped<ITokenEncryptionService, TokenEncryptionService>();
+        services.AddScoped<Application.Common.Interfaces.ITokenEncryptionService, TokenEncryptionService>();
+
+        // Identity Service
+        services.AddScoped<IIdentityService, IdentityService>();
+
+        // JWT Token Service
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+        // Dexcom Service
+        services.AddScoped<IDexcomService, Services.Dexcom.DexcomService>();
+
+        // Glucose Reading Service
+        services.AddScoped<IGlucoseReadingService, Services.Dexcom.GlucoseReadingService>();
     }
 
     /// <summary>
