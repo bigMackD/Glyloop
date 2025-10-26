@@ -42,5 +42,14 @@ public interface IIdentityService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result indicating success or failure</returns>
     Task<Result> UpdateUserPreferencesAsync(UserId userId, TirRange tirRange, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Validates user credentials and returns user information if valid.
+    /// </summary>
+    /// <param name="email">User's email address</param>
+    /// <param name="password">User's password</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Result containing user ID and email, or error if invalid</returns>
+    Task<Result<(Guid UserId, string Email)>> ValidateCredentialsAsync(string email, string password, CancellationToken cancellationToken = default);
 }
 

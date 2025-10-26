@@ -8,7 +8,7 @@ namespace Glyloop.Application.Queries.Chart.GetChartData;
 /// </summary>
 public class GetChartDataQueryValidator : AbstractValidator<GetChartDataQuery>
 {
-    private static readonly string[] ValidRanges = { "1h", "3h", "6h", "12h", "24h" };
+    private static readonly string[] ValidRanges = { "1h", "3h", "5h", "8h", "12h", "24h" };
 
     public GetChartDataQueryValidator()
     {
@@ -16,7 +16,7 @@ public class GetChartDataQueryValidator : AbstractValidator<GetChartDataQuery>
             .NotEmpty()
             .WithMessage("Range is required.")
             .Must(BeValidRange)
-            .WithMessage("Range must be one of: 1h, 3h, 6h, 12h, 24h.");
+            .WithMessage("Range must be one of: 1h, 3h, 5h, 8h, 12h, 24h.");
     }
 
     private bool BeValidRange(string range)

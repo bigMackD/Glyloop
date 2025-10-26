@@ -3,6 +3,7 @@ using System;
 using Glyloop.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Glyloop.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(GlyloopDbContext))]
-    partial class GlyloopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021150229_AddTirBoundsToApplicationUser")]
+    partial class AddTirBoundsToApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

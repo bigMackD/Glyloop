@@ -13,20 +13,17 @@ public static class DependencyInjection
 {
     /// <summary>
     /// Adds Application layer services to the dependency injection container.
-    /// Order of behaviors matters: Logging → Validation
+    /// Registers MediatR with validation pipeline behavior.
     /// Note: Authentication is handled at the API layer via [Authorize] attribute.
     /// </summary>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        // Register MediatR with pipeline behaviors (order matters!)
+        // Register MediatR with pipeline behaviors
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(assembly);
-            
-            // Outermost: logs everything including errors
-            config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             
             // Validates before processing
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
