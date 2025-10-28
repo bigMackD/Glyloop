@@ -37,11 +37,12 @@ People with T1D need a fast, reliable way to see current glucose, log key daily 
 3.3 Event lifecycle and history
 - Create: modal form with type selector defaulting to Food; required field validation.
 - No edits, deletes, or backdating in MVP; events are immutable once created.
-- History view remains available for browsing logged events and jumping the chart to event timestamps.
+- History is presented as an embedded panel below the Dashboard chart; browsing and selecting events re-centers the chart to the selected event time.
 
 3.4 Chart and analysis
 - Chart ranges: 1h, 3h, 5h, 8h, 12h, 24h; default 3h on first visit.
 - Interactions: crosshair with exact value/time; tooltips for glucose and overlays; gaps shown as breaks; dynamic y-clamp [50, 350] mg/dL; no smoothing.
+- History integration: selecting an event in the History panel re-centers the chart to ±30 minutes around the event time and temporarily highlights the event marker.
 - Overlays: display Food, Insulin (fast/long with distinct icons/colors and vertical stacking), Exercise, Notes.
 - Time in range (TIR): default target 70–180 mg/dL; one editable range; compute and display TIR% for the active window; exclude missing intervals from denominator.
 
@@ -68,7 +69,7 @@ In scope for MVP:
 - Event logging for Food, Insulin, Exercise, Notes with validation and overlays.
 - +2h food outcome per single event with strict ±5-minute tolerance.
 - TIR calculation for active window with one editable range.
-- History view with date range and type/tag filters.
+- History panel (embedded under Dashboard) with date range and type/tag filters.
 - Dockerized deployment with compose.
 - Security posture with Identity + JWT, password policy, token encryption at rest.
 
@@ -166,11 +167,11 @@ Acceptance Criteria:
 - If no reading exists, N/A is displayed with an explanatory tooltip and an ≈2h badge.
 
 US-011  
-Title: History view with filters and jump-to-time  
+Title: History panel with filters and jump-to-time (embedded in Dashboard)  
 Description: As a user, I want to browse and locate past events efficiently.  
 Acceptance Criteria:  
 - I can filter by date range and by type/tag.  
-- Clicking any row opens event details and moves the chart to that time.
+- Clicking any row opens event details and re-centers the chart to ±30 minutes around that event time.
 
 US-012  
 Title: Manage Dexcom link and unlink  

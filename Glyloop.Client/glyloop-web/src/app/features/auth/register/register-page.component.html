@@ -1,0 +1,64 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <!-- Header -->
+    <div>
+      <h1 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white" i18n="@@register.title">
+        Create your account
+      </h1>
+      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400" i18n="@@register.subtitle">
+        Join Glyloop to start tracking your glucose levels
+      </p>
+    </div>
+
+    <!-- Success Message -->
+    @if (success()) {
+      <div class="rounded-md bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800" role="alert">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3 flex-1">
+            <h3 class="text-sm font-medium text-green-800 dark:text-green-200" i18n="@@register.success.title">
+              Account created successfully!
+            </h3>
+            <div class="mt-2">
+              <p class="text-sm text-green-700 dark:text-green-300" i18n="@@register.success.message">
+                Your account has been created. Please log in to continue.
+              </p>
+            </div>
+            <div class="mt-4">
+              <button
+                type="button"
+                (click)="onGoToLogin()"
+                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 dark:text-green-200 dark:bg-green-800 dark:hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                i18n="@@register.success.goToLoginButton">
+                Go to Login
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Registration Form -->
+    <app-register-form
+      [isSubmitting]="isSubmitting()"
+      [serverError]="serverError()"
+      [emailTaken]="emailTaken()"
+      (submitted)="onSubmit($event)">
+    </app-register-form>
+
+    <!-- Login Link -->
+    <div class="text-center">
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        <ng-container i18n="@@register.alreadyHaveAccount">Already have an account?</ng-container>
+        <a href="/login" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300" i18n="@@register.signInLink">
+          Sign in
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+

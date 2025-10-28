@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en-US" trgLang="es">
+  <file id="ngi18n" original="ng.template">
+    <unit id="register.title">
+      <segment>
+        <source>Create your account</source>
+        <target>Crea tu cuenta</target>
+      </segment>
+    </unit>
+    <unit id="register.subtitle">
+      <segment>
+        <source>Join Glyloop to start tracking your glucose levels</source>
+        <target>Únete a Glyloop para empezar a rastrear tus niveles de glucosa</target>
+      </segment>
+    </unit>
+    <unit id="register.form.email.label">
+      <segment>
+        <source>Email address</source>
+        <target>Correo electrónico</target>
+      </segment>
+    </unit>
+    <unit id="register.form.email.placeholder">
+      <segment>
+        <source>you@example.com</source>
+        <target>tu@ejemplo.com</target>
+      </segment>
+    </unit>
+    <unit id="register.form.password.label">
+      <segment>
+        <source>Password</source>
+        <target>Contraseña</target>
+      </segment>
+    </unit>
+    <unit id="register.form.password.placeholder">
+      <segment>
+        <source>At least 12 characters</source>
+        <target>Al menos 12 caracteres</target>
+      </segment>
+    </unit>
+    <unit id="register.form.submit.button">
+      <segment>
+        <source>Create account</source>
+        <target>Crear cuenta</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>
+
