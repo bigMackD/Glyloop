@@ -1,3 +1,6 @@
+// Import localize polyfill before any other imports to ensure $localize is available
+import '@angular/localize/init';
+
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { App } from './app/app';

@@ -1,7 +1,7 @@
 ## View Implementation Plan — Auth: Register
 
 ### 1. Overview
-Build a dedicated registration view at `/register` that lets a new user create an account by entering a unique email and a password meeting the minimum 12-character requirement. On success, prompt the user to log in (and optionally redirect to `/login`). The page must show inline validation, a password strength hint, announce errors via aria-live, and avoid autofill pitfalls.
+ Build a dedicated registration view at `/register` that lets a new user create an account by entering a unique email and a password meeting the minimum 12-character requirement. On success, prompt the user to log in (and optionally redirect to `/login`). The page must show inline validation, announce errors via aria-live, and avoid autofill pitfalls. All validation is handled via form validators.
 
 ### 2. View Routing
 - Path: `/register`
@@ -24,9 +24,6 @@ export const routes: Routes = [
   - Reactive form for `email` and `password`
   - Inline validation and aria-live region
   - Emits submit event with form values
-- PasswordStrengthHintComponent (standalone UI helper)
-  - Live hint: “At least 12 characters” and basic strength feedback
-  - Visual color changes for weak/ok/strong without blocking beyond min length
 
 ### 4. Component Details
 #### RegisterPageComponent
@@ -49,7 +46,6 @@ export const routes: Routes = [
 - Main elements:
   - Email input (`type="email"`, `autocomplete="email"`)
   - Password input (`type="password"`, `autocomplete="new-password"`) + show/hide toggle
-  - `PasswordStrengthHintComponent` bound to password value
   - Submit button (disabled while invalid or submitting)
   - Aria-live region for errors (polite)
 - Handled interactions:
@@ -149,7 +145,7 @@ export class AuthApiService {
 ```
 
 ### 8. User Interactions
-- Enter email/password → live validation updates and hints
+- Enter email/password → live validation updates
 - Submit:
   - If form invalid → prevent submit, focus first invalid control, announce errors
   - If valid → call API; while pending disable inputs and show spinner on button
@@ -163,8 +159,7 @@ export class AuthApiService {
   - Required, valid format (`Validators.required`, `Validators.email`)
   - Server: uniqueness enforced; map 409 to `emailTaken`
 - Password:
-  - Required, `Validators.minLength(12)`
-  - Soft checks (non-blocking): mixture of character types, not all whitespace, not single repeated char
+  - Required, `Validators.minLength(12)`; additional soft checks may be included directly in the validator (non-blocking warnings)
 - Submit disabled conditions:
   - `form.invalid || isSubmitting`
 - Autofill and security considerations:
@@ -195,21 +190,18 @@ export class AuthApiService {
    - Standalone; inputs: `isSubmitting`, `serverError`, `emailTaken`
    - Output: `submitted`
    - Build `FormGroup` with validators; render inputs + errors; aria-live region
-   - Include password visibility toggle; wire `PasswordStrengthHintComponent`
-6. Create `PasswordStrengthHintComponent`:
-   - Accepts `@Input() password: string`
-   - Compute simple score (length threshold, char variety) for visual hint
-7. Styling:
+   - Include password visibility toggle.
+6. Styling:
    - Use Angular Material + utility classes (Tailwind if available) for spacing and contrast
    - Ensure sufficient contrast in dark mode
-8. Accessibility:
+7. Accessibility:
    - Add `aria-live` for errors; focus management on submit failure; labels and descriptions
-9. QA and flows:
+8. QA and flows:
    - Valid submit → navigates to login with success flag
    - Short password → inline error blocks submit
    - Duplicate email → inline email error from 409
    - Offline → banner with retry
-10. Optional: On the login page, read `registered=true` to show a success toast/banner “Account created. Please log in.”
+9. Optional: On the login page, read `registered=true` to show a success toast/banner “Account created. Please log in.”
 
 ### Appendix: Example Validators (excerpt)
 ```ts

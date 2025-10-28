@@ -28,6 +28,23 @@
 - Leverage Angular CLI for schematics and code generation
 - Implement proper lazy loading with loadComponent and loadChildren
 
+#### ANGULAR_I18N
+
+- Use Angular's built-in i18n system with @angular/localize for all user-facing text
+- Mark static text in templates with i18n attribute using unique IDs: `i18n="@@feature.component.element"`
+- Use i18n-[attribute] for translating element attributes: `i18n-placeholder="@@register.form.email.placeholder"`
+- Wrap inline text with ng-container when needed: `<ng-container i18n="@@id">Text</ng-container>`
+- Use $localize in TypeScript for dynamic strings: `$localize`:@@id:Default text``
+- Follow dot-notation ID convention: `[feature].[component].[element].[property]`
+- Extract messages with: `ng extract-i18n --output-path src/locale`
+- Store translation files in src/locale/ directory using XLIFF 2.0 format
+- Configure sourceLocale and locales in angular.json i18n section
+- Enable localize: true in build options for multi-locale builds
+- Use interpolation in $localize with named placeholders: `$localize`:@@id:Text ${value}:valueName:``
+- Keep IDs stable across refactoring to preserve existing translations
+- Provide context in comments when meaning might be ambiguous
+- Test all supported locales before deployment
+
 #### NGRX
 
 - Use the createFeature and createReducer functions to simplify reducer creation
