@@ -8,7 +8,7 @@ import { ChartRange, PollState } from '../models/dashboard.types';
 @Injectable({ providedIn: 'root' })
 export class DashboardStateService {
   // State signals
-  private readonly _activeRange = signal<ChartRange>('3h'); // Default 3 hours
+  private readonly _activeRange = signal<ChartRange>(3); // Default 3 hours
   private readonly _selectedEventId = signal<string | undefined>(undefined);
   private readonly _pollState = signal<PollState>({ status: 'idle' });
 
@@ -20,8 +20,7 @@ export class DashboardStateService {
   // Computed signals
   readonly rangeSeconds = computed(() => {
     const range = this._activeRange();
-    const hours = parseInt(range.replace('h', ''), 10);
-    return hours * 3600;
+    return range * 3600;
   });
 
   /**
@@ -49,7 +48,7 @@ export class DashboardStateService {
    * Resets dashboard state to defaults
    */
   reset(): void {
-    this._activeRange.set('3h');
+    this._activeRange.set(3);
     this._selectedEventId.set(undefined);
     this._pollState.set({ status: 'idle' });
   }

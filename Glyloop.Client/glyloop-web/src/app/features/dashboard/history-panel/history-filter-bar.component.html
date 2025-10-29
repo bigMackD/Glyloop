@@ -39,12 +39,11 @@
       <mat-form-field appearance="outline" class="filter-field w-full">
         <mat-label>{{ eventTypesLabel }}</mat-label>
         <mat-select
-          formControlName="types"
-          multiple
+          formControlName="eventType"
           [attr.aria-label]="eventTypesLabel"
           class="bg-card-bg text-text-primary"
         >
-          <mat-option [value]="null" disabled>{{ allTypesLabel }}</mat-option>
+          <mat-option [value]="null">{{ allTypesLabel }}</mat-option>
           @for (type of eventTypes; track type) {
             <mat-option [value]="type">{{ type }}</mat-option>
           }

@@ -1,17 +1,33 @@
-.details-drawer-container {
-  @apply h-full;
+:host {
+  @apply block relative;
 }
 
-.details-drawer {
-  @apply w-full max-w-md;
+.history-content {
+  @apply relative;
+}
+
+.details-overlay {
+  @apply fixed inset-0 z-[60] flex items-start justify-center p-4 sm:p-8;
+  pointer-events: none;
+}
+
+.overlay-backdrop {
+  @apply absolute inset-0 bg-black/60 backdrop-blur-sm;
+  pointer-events: auto;
+}
+
+.details-panel {
+  @apply relative z-[1] w-full max-w-4xl bg-card-bg border border-card-border rounded-2xl shadow-2xl flex flex-col;
+  max-height: 90vh;
+  pointer-events: auto;
 }
 
 .drawer-content {
-  @apply h-full flex flex-col;
+  @apply flex-1 flex flex-col;
 }
 
 .drawer-header {
-  @apply bg-surface-container;
+  @apply bg-surface-container rounded-t-2xl;
 
   h2 {
     @apply m-0;
@@ -23,19 +39,23 @@
 }
 
 .detail-field {
-  @apply space-y-1;
+  @apply space-y-2;
 }
 
 .detail-label {
-  @apply block text-sm font-medium text-on-surface-variant;
+  @apply block text-sm font-medium text-on-surface-variant uppercase tracking-wide;
 }
 
 .detail-value {
   @apply text-base text-on-surface;
 }
 
+.detail-section {
+  @apply space-y-4;
+}
+
 .outcome-section {
-  @apply bg-surface-container rounded-lg p-4;
+  @apply bg-surface-container rounded-xl p-4 border border-outline-variant/40;
 }
 
 .outcome-badge {
@@ -48,7 +68,7 @@
 }
 
 .outcome-not-available {
-  @apply p-2 bg-surface-variant rounded;
+  @apply p-3 bg-surface-variant/40 rounded-lg;
 }
 
 .outcome-error {

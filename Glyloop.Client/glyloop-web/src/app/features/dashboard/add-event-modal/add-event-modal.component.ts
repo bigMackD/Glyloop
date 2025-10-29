@@ -53,17 +53,18 @@ export class AddEventModalComponent {
 
   // Forms
   readonly foodForm = this.fb.group({
-    carbs_g: [
+    carbohydratesGrams: [
       null as number | null,
       [Validators.required, Validators.min(0), Validators.max(300)]
     ],
-    meal_tag: [''],
-    absorption_hint: [''],
+    mealTagId: [null as number | null],
+    absorptionHint: [''],
     note: ['', Validators.maxLength(500)]
   });
 
   readonly insulinForm = this.fb.group({
-    insulin_units: [
+    insulinType: ['Fast', Validators.required],
+    insulinUnits: [
       null as number | null,
       [Validators.required, Validators.min(0), Validators.max(100)]
     ],
@@ -74,26 +75,40 @@ export class AddEventModalComponent {
   });
 
   readonly exerciseForm = this.fb.group({
-    type: ['', Validators.required],
-    duration_min: [
+    exerciseTypeId: [null as number | null, Validators.required],
+    durationMinutes: [
       null as number | null,
       [Validators.required, Validators.min(1), Validators.max(300)]
     ],
     intensity: [''],
-    start_time_utc: ['']
+    note: ['', Validators.maxLength(500)]
   });
 
   readonly noteForm = this.fb.group({
-    note: ['', [Validators.required, Validators.maxLength(500)]]
+    noteText: ['', [Validators.required, Validators.maxLength(500)]]
   });
 
   // Options for selects
-  readonly mealTags = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+  readonly mealTags = [
+    { id: 1, label: 'Breakfast' },
+    { id: 2, label: 'Lunch' },
+    { id: 3, label: 'Dinner' },
+    { id: 4, label: 'Snack' }
+  ];
   readonly absorptionHints = ['Fast', 'Medium', 'Slow'];
+  readonly insulinTypes = ['Fast', 'Long'];
   readonly insulinPreparations = ['Rapid', 'Short', 'Intermediate', 'Long'];
   readonly insulinDeliveries = ['Injection', 'Pump'];
   readonly insulinTimings = ['Before meal', 'With meal', 'After meal'];
-  readonly exerciseTypes = ['Walking', 'Running', 'Cycling', 'Swimming', 'Strength', 'Sports', 'Other'];
+  readonly exerciseTypes = [
+    { id: 1, label: 'Walking' },
+    { id: 2, label: 'Running' },
+    { id: 3, label: 'Cycling' },
+    { id: 4, label: 'Swimming' },
+    { id: 5, label: 'Strength' },
+    { id: 6, label: 'Sports' },
+    { id: 7, label: 'Other' }
+  ];
   readonly intensities = ['Low', 'Moderate', 'High'];
 
   // Localized strings
@@ -112,6 +127,7 @@ export class AddEventModalComponent {
   readonly noteLabel = $localize`:@@dashboard.addEvent.note:Note`;
 
   // Insulin labels
+  readonly insulinTypeLabel = $localize`:@@dashboard.addEvent.insulin.type:Insulin Type`;
   readonly insulinUnitsLabel = $localize`:@@dashboard.addEvent.insulin.units:Units`;
   readonly preparationLabel = $localize`:@@dashboard.addEvent.insulin.preparation:Preparation`;
   readonly deliveryLabel = $localize`:@@dashboard.addEvent.insulin.delivery:Delivery`;
@@ -121,6 +137,7 @@ export class AddEventModalComponent {
   readonly exerciseTypeLabel = $localize`:@@dashboard.addEvent.exercise.type:Exercise Type`;
   readonly durationLabel = $localize`:@@dashboard.addEvent.exercise.duration:Duration (minutes)`;
   readonly intensityLabel = $localize`:@@dashboard.addEvent.exercise.intensity:Intensity`;
+  readonly exerciseNoteLabel = $localize`:@@dashboard.addEvent.exercise.note:Note`;
 
   /**
    * Handles tab change and resets forms
@@ -135,10 +152,29 @@ export class AddEventModalComponent {
    * Resets all forms
    */
   private resetAllForms(): void {
-    this.foodForm.reset();
-    this.insulinForm.reset();
-    this.exerciseForm.reset();
-    this.noteForm.reset();
+    this.foodForm.reset({
+      carbohydratesGrams: null,
+      mealTagId: null,
+      absorptionHint: '',
+      note: ''
+    });
+    this.insulinForm.reset({
+      insulinType: 'Fast',
+      insulinUnits: null,
+      preparation: '',
+      delivery: '',
+      timing: '',
+      note: ''
+    });
+    this.exerciseForm.reset({
+      exerciseTypeId: null,
+      durationMinutes: null,
+      intensity: '',
+      note: ''
+    });
+    this.noteForm.reset({
+      noteText: ''
+    });
   }
 
   /**
@@ -177,9 +213,10 @@ export class AddEventModalComponent {
 
     const value = this.foodForm.value;
     const payload = {
-      carbs_g: value.carbs_g!,
-      meal_tag: value.meal_tag || undefined,
-      absorption_hint: value.absorption_hint || undefined,
+      eventTime: new Date().toISOString(),
+      carbohydratesGrams: value.carbohydratesGrams!,
+      mealTagId: value.mealTagId ?? undefined,
+      absorptionHint: value.absorptionHint || undefined,
       note: value.note || undefined
     };
 
@@ -213,7 +250,9 @@ export class AddEventModalComponent {
 
     const value = this.insulinForm.value;
     const payload = {
-      insulin_units: value.insulin_units!,
+      eventTime: new Date().toISOString(),
+      insulinType: value.insulinType!,
+      insulinUnits: value.insulinUnits!,
       preparation: value.preparation || undefined,
       delivery: value.delivery || undefined,
       timing: value.timing || undefined,
@@ -250,10 +289,11 @@ export class AddEventModalComponent {
 
     const value = this.exerciseForm.value;
     const payload = {
-      type: value.type!,
-      duration_min: value.duration_min!,
+      eventTime: new Date().toISOString(),
+      exerciseTypeId: value.exerciseTypeId!,
+      durationMinutes: value.durationMinutes!,
       intensity: value.intensity || undefined,
-      start_time_utc: value.start_time_utc || undefined
+      note: value.note || undefined
     };
 
     this.eventsService
@@ -286,7 +326,8 @@ export class AddEventModalComponent {
 
     const value = this.noteForm.value;
     const payload = {
-      note: value.note!
+      eventTime: new Date().toISOString(),
+      noteText: value.noteText!
     };
 
     this.eventsService

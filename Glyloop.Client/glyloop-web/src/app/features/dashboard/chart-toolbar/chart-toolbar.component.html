@@ -6,10 +6,10 @@
         type="button"
         (click)="onRangeChange(range)"
         [class]="getRangeButtonClass(range)"
-        [attr.aria-label]="'Show ' + range + ' of data'"
+        [attr.aria-label]="'Show ' + range + ' hours of data'"
         [attr.aria-pressed]="range === activeRange()"
       >
-        {{ range }}
+        {{ range }}h
       </button>
     }
   </div>

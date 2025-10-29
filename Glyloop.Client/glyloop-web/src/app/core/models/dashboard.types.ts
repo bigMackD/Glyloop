@@ -4,7 +4,7 @@
 // ============================================================================
 
 // Shared
-export type ChartRange = '1h' | '3h' | '5h' | '8h' | '12h' | '24h';
+export type ChartRange = 1 | 3 | 5 | 8 | 12 | 24;
 
 export type EventType = 'Food' | 'Insulin' | 'Exercise' | 'Note';
 
@@ -49,65 +49,70 @@ export interface TimeInRangeResponseDto {
 // Events (list and details)
 export interface EventListItemDto {
   eventId: string;
-  type: EventType;
-  timestampUtc: string;
-  summary: string; // e.g., "Food: 45g" or "Insulin: 3U (fast)"
-  tags?: string[];
+  eventType: EventType;
+  eventTime: string;
+  summary: string;
 }
 
 export interface EventResponseDto {
   eventId: string;
-  type: EventType;
-  timestampUtc: string;
-  // Food
-  carbs_g?: number;
-  meal_tag?: string;
-  absorption_hint?: string;
+  eventType: EventType;
+  eventTime: string;
+  createdAt: string;
   note?: string;
-  // Insulin
-  insulin_units?: number; // 0..100 in 0.5 steps
+  carbohydratesGrams?: number;
+  mealTagId?: number;
+  absorptionHint?: string;
+  insulinType?: string;
+  insulinUnits?: number;
   preparation?: string;
   delivery?: string;
   timing?: string;
-  // Exercise
-  exercise_type?: string;
-  duration_min?: number; // 1..300
+  exerciseTypeId?: number;
+  durationMinutes?: number;
   intensity?: string;
-  start_time_utc?: string;
+  noteText?: string;
 }
 
 export interface EventOutcomeResponseDto {
   eventId: string;
-  available: boolean; // true if glucose exists within ±5 min of +120 min
-  outcomeTimestampUtc?: string;
-  glucoseMgdl?: number; // present only if available
+  eventTime: string;
+  outcomeTime: string;
+  glucoseValue?: number;
+  isApproximate: boolean;
+  message?: string;
 }
 
 // Create Event payloads
 export interface CreateFoodEventRequestDto {
-  carbs_g: number;
-  meal_tag?: string;
-  absorption_hint?: string;
-  note?: string; // ≤500
+  eventTime: string;
+  carbohydratesGrams: number;
+  mealTagId?: number;
+  absorptionHint?: string;
+  note?: string;
 }
 
 export interface CreateInsulinEventRequestDto {
-  insulin_units: number; // 0..100, step 0.5
+  eventTime: string;
+  insulinType: string;
+  insulinUnits: number;
   preparation?: string;
   delivery?: string;
   timing?: string;
-  note?: string; // ≤500
+  note?: string;
 }
 
 export interface CreateExerciseEventRequestDto {
-  type: string;
-  duration_min: number; // 1..300
+  eventTime: string;
+  exerciseTypeId: number;
+  durationMinutes: number;
   intensity?: string;
-  start_time_utc?: string; // not in future
+  note?: string;
 }
 
 export interface CreateNoteEventRequestDto {
-  note: string; // ≤500
+  eventTime: string;
+  noteText: string;
 }
 
 // View models

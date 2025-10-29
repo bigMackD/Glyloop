@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { EventListItemDto } from '../../../core/models/dashboard.types';
 
 /**
@@ -13,7 +12,7 @@ import { EventListItemDto } from '../../../core/models/dashboard.types';
 @Component({
   selector: 'app-history-virtual-list',
   standalone: true,
-  imports: [CommonModule, ScrollingModule, MatListModule, MatIconModule, MatChipsModule],
+  imports: [CommonModule, ScrollingModule, MatListModule, MatIconModule],
   templateUrl: './history-virtual-list.component.html',
   styleUrl: './history-virtual-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -121,7 +120,7 @@ export class HistoryVirtualListComponent {
   /**
    * Gets the icon for an event type
    */
-  getEventTypeIcon(type: string): string {
+  getEventTypeIcon(type: EventListItemDto['eventType']): string {
     switch (type) {
       case 'Food':
         return 'restaurant';
@@ -139,7 +138,7 @@ export class HistoryVirtualListComponent {
   /**
    * Gets the color class for an event type
    */
-  getEventTypeColorClass(type: string): string {
+  getEventTypeColorClass(type: EventListItemDto['eventType']): string {
     switch (type) {
       case 'Food':
         return 'event-type-food';

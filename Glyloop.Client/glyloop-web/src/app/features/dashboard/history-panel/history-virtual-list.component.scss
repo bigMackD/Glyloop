@@ -73,17 +73,6 @@
   @apply text-sm text-text-secondary mt-1;
 }
 
-.item-tags {
-  @apply flex-shrink-0;
-
-  mat-chip-set {
-    mat-chip {
-      @apply text-xs;
-      height: 24px;
-    }
-  }
-}
-
 .selection-indicator {
   @apply flex-shrink-0 text-primary;
 

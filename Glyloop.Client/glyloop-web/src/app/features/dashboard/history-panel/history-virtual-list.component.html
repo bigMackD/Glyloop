@@ -18,26 +18,15 @@
         (keydown)="onKeyDown($event, i)"
       >
         <!-- Event Type Icon -->
-        <div class="item-icon" [class]="getEventTypeColorClass(item.type)">
-          <mat-icon>{{ getEventTypeIcon(item.type) }}</mat-icon>
+        <div class="item-icon" [class]="getEventTypeColorClass(item.eventType)">
+          <mat-icon>{{ getEventTypeIcon(item.eventType) }}</mat-icon>
         </div>
 
         <!-- Event Details -->
         <div class="item-details">
           <div class="item-summary">{{ item.summary }}</div>
-          <div class="item-timestamp">{{ formatTimestamp(item.timestampUtc) }}</div>
+          <div class="item-timestamp">{{ formatTimestamp(item.eventTime) }}</div>
         </div>
-
-        <!-- Tags (if any) -->
-        @if (item.tags && item.tags.length > 0) {
-          <div class="item-tags">
-            <mat-chip-set>
-              @for (tag of item.tags; track tag) {
-                <mat-chip>{{ tag }}</mat-chip>
-              }
-            </mat-chip-set>
-          </div>
-        }
 
         <!-- Selection Indicator -->
         @if (isSelected(item.eventId)) {

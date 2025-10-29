@@ -23,7 +23,7 @@ export class ChartToolbarComponent {
   readonly manualRefresh = output<void>();
 
   // Available ranges
-  readonly ranges: ChartRange[] = ['1h', '3h', '5h', '8h', '12h', '24h'];
+  readonly ranges: ChartRange[] = [1, 3, 5, 8, 12, 24];
 
   // Localized strings
   readonly timezoneNote = $localize`:@@dashboard.toolbar.timezoneNote:All times local; range computed in UTC`;

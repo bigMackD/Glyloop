@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, output, signal, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -20,7 +19,6 @@ import { catchError, of } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    MatSidenavModule,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
@@ -45,6 +43,7 @@ export class EventDetailsDrawerComponent {
   readonly outcome = signal<EventOutcomeResponseDto | null>(null);
   readonly outcomeLoading = signal<boolean>(false);
   readonly outcomeError = signal<string | undefined>(undefined);
+  readonly outcomeUnavailable = signal<boolean>(false);
 
   // Localized strings
   readonly closeLabel = $localize`:@@dashboard.eventDetails.close:Close`;
@@ -63,6 +62,7 @@ export class EventDetailsDrawerComponent {
   readonly noteLabel = $localize`:@@dashboard.eventDetails.note:Note`;
 
   // Insulin event labels
+  readonly insulinTypeLabel = $localize`:@@dashboard.eventDetails.insulinType:Type`;
   readonly insulinUnitsLabel = $localize`:@@dashboard.eventDetails.insulinUnits:Units`;
   readonly preparationLabel = $localize`:@@dashboard.eventDetails.preparation:Preparation`;
   readonly deliveryLabel = $localize`:@@dashboard.eventDetails.delivery:Delivery`;
@@ -72,17 +72,34 @@ export class EventDetailsDrawerComponent {
   readonly exerciseTypeLabel = $localize`:@@dashboard.eventDetails.exerciseType:Exercise Type`;
   readonly durationLabel = $localize`:@@dashboard.eventDetails.duration:Duration`;
   readonly intensityLabel = $localize`:@@dashboard.eventDetails.intensity:Intensity`;
-  readonly startTimeLabel = $localize`:@@dashboard.eventDetails.startTime:Start Time`;
+
+  private readonly mealTagOptions = [
+    { id: 1, label: 'Breakfast' },
+    { id: 2, label: 'Lunch' },
+    { id: 3, label: 'Dinner' },
+    { id: 4, label: 'Snack' }
+  ];
+
+  private readonly exerciseTypeOptions = [
+    { id: 1, label: 'Walking' },
+    { id: 2, label: 'Running' },
+    { id: 3, label: 'Cycling' },
+    { id: 4, label: 'Swimming' },
+    { id: 5, label: 'Strength' },
+    { id: 6, label: 'Sports' },
+    { id: 7, label: 'Other' }
+  ];
 
   constructor() {
     // Fetch outcome when event changes (if Food)
     effect(() => {
       const currentEvent = this.event();
-      if (currentEvent && currentEvent.type === 'Food') {
+      if (currentEvent && currentEvent.eventType === 'Food') {
         this.fetchOutcome(currentEvent.eventId);
       } else {
         this.outcome.set(null);
         this.outcomeError.set(undefined);
+        this.outcomeUnavailable.set(false);
       }
     });
   }
@@ -93,6 +110,7 @@ export class EventDetailsDrawerComponent {
   private fetchOutcome(eventId: string): void {
     this.outcomeLoading.set(true);
     this.outcomeError.set(undefined);
+    this.outcomeUnavailable.set(false);
 
     this.eventsService
       .getOutcome(eventId)
@@ -100,10 +118,8 @@ export class EventDetailsDrawerComponent {
         catchError((err) => {
           // 404 is expected if outcome not available yet
           if (err.status === 404) {
-            this.outcome.set({
-              eventId,
-              available: false
-            });
+            this.outcome.set(null);
+            this.outcomeUnavailable.set(true);
           } else {
             this.outcomeError.set($localize`:@@dashboard.eventDetails.outcomeError:Failed to load outcome`);
           }
@@ -114,6 +130,7 @@ export class EventDetailsDrawerComponent {
         this.outcomeLoading.set(false);
         if (result) {
           this.outcome.set(result);
+          this.outcomeUnavailable.set(false);
         }
       });
   }
@@ -173,5 +190,23 @@ export class EventDetailsDrawerComponent {
       default:
         return 'event';
     }
+  }
+
+  getMealTagLabel(id?: number | null): string | null {
+    if (id == null) {
+      return null;
+    }
+
+    const option = this.mealTagOptions.find((tag) => tag.id === id);
+    return option ? option.label : null;
+  }
+
+  getExerciseTypeLabel(id?: number | null): string | null {
+    if (id == null) {
+      return null;
+    }
+
+    const option = this.exerciseTypeOptions.find((type) => type.id === id);
+    return option ? option.label : null;
   }
 }

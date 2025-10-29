@@ -38,12 +38,12 @@ public class ChartController : ControllerBase
     /// <response code="401">User not authenticated</response>
     /// <remarks>
     /// Supported time ranges:
-    /// - 1h: Last 1 hour
-    /// - 3h: Last 3 hours (default)
-    /// - 5h: Last 5 hours
-    /// - 8h: Last 8 hours
-    /// - 12h: Last 12 hours
-    /// - 24h: Last 24 hours
+    /// - 1: Last 1 hour
+    /// - 3: Last 3 hours (default)
+    /// - 5: Last 5 hours
+    /// - 8: Last 8 hours
+    /// - 12: Last 12 hours
+    /// - 24: Last 24 hours
     /// 
     /// Gaps in glucose data are shown as breaks in the chart.
     /// Y-axis is dynamically clamped to [50, 350] mg/dL.
@@ -54,7 +54,7 @@ public class ChartController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ChartDataResponse>> GetChartData(
-        [FromQuery] string range = "3h",
+        [FromQuery] string range = "3",
         CancellationToken cancellationToken = default)
     {
         var query = range.ToQuery();
@@ -77,7 +77,7 @@ public class ChartController : ControllerBase
     /// <summary>
     /// Calculates Time in Range (TIR) statistics for the specified time window.
     /// </summary>
-    /// <param name="range">Time range (1h, 3h, 5h, 8h, 12h, 24h). Default: 3h</param>
+    /// <param name="range">Time range in hours (1, 3, 5, 8, 12, 24). Default: 3</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>TIR percentage and detailed readings breakdown</returns>
     /// <response code="200">TIR statistics calculated successfully</response>
@@ -99,7 +99,7 @@ public class ChartController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<TimeInRangeResponse>> GetTimeInRange(
-        [FromQuery] string range = "3h",
+        [FromQuery] string range = "3",
         CancellationToken cancellationToken = default)
     {
         var query = range.ToTirQuery();

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FluentValidation;
 
 namespace Glyloop.Application.Queries.Chart.GetChartData;
@@ -8,7 +9,7 @@ namespace Glyloop.Application.Queries.Chart.GetChartData;
 /// </summary>
 public class GetChartDataQueryValidator : AbstractValidator<GetChartDataQuery>
 {
-    private static readonly string[] ValidRanges = { "1h", "3h", "5h", "8h", "12h", "24h" };
+    private static readonly HashSet<int> ValidRanges = new() { 1, 3, 5, 8, 12, 24 };
 
     public GetChartDataQueryValidator()
     {
@@ -16,12 +17,12 @@ public class GetChartDataQueryValidator : AbstractValidator<GetChartDataQuery>
             .NotEmpty()
             .WithMessage("Range is required.")
             .Must(BeValidRange)
-            .WithMessage("Range must be one of: 1h, 3h, 5h, 8h, 12h, 24h.");
+            .WithMessage("Range must be one of: 1, 3, 5, 8, 12, 24 (hours).");
     }
 
     private bool BeValidRange(string range)
     {
-        return ValidRanges.Contains(range?.ToLowerInvariant());
+        return int.TryParse(range, out var hours) && ValidRanges.Contains(hours);
     }
 }
 

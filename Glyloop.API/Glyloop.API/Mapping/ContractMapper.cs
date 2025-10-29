@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Glyloop.API.Contracts.Account;
 using Glyloop.API.Contracts.Auth;
 using Glyloop.API.Contracts.Dexcom;
@@ -26,6 +27,8 @@ namespace Glyloop.API.Mapping;
 /// </summary>
 public static class ContractMapper
 {
+    private static readonly HashSet<int> AllowedChartRanges = new() { 1, 3, 5, 8, 12, 24 };
+
     #region Auth Mappings
 
     public static RegisterUserCommand ToCommand(this RegisterRequest request)
@@ -192,15 +195,10 @@ public static class ContractMapper
     private static (DateTimeOffset FromTime, DateTimeOffset ToTime) ParseTimeRange(string range)
     {
         var now = DateTimeOffset.UtcNow;
-        var hours = range.ToLowerInvariant() switch
+        if (!int.TryParse(range, out var hours) || !AllowedChartRanges.Contains(hours))
         {
-            "1h" => 1,
-            "3h" => 3,
-            "6h" => 6,
-            "12h" => 12,
-            "24h" => 24,
-            _ => 3 // Default to 3 hours
-        };
+            hours = 3;
+        }
 
         return (now.AddHours(-hours), now);
     }

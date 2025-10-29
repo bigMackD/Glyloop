@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -49,7 +49,7 @@ export class HistoryFilterBarComponent {
   readonly filterForm = this.fb.group({
     fromDate: [null as Date | null],
     toDate: [null as Date | null],
-    types: [[] as EventType[]]
+    eventType: [null as EventType | null]
   });
 
   // Localized strings
@@ -84,7 +84,7 @@ export class HistoryFilterBarComponent {
       {
         fromDate,
         toDate,
-        types: filters.types || []
+        eventType: filters.types && filters.types.length > 0 ? filters.types[0] : null
       },
       { emitEvent: false }
     );
@@ -109,7 +109,7 @@ export class HistoryFilterBarComponent {
       ...currentFilters,
       fromDateUtc: formValue.fromDate ? formValue.fromDate.toISOString() : undefined,
       toDateUtc: formValue.toDate ? formValue.toDate.toISOString() : undefined,
-      types: formValue.types && formValue.types.length > 0 ? formValue.types : undefined,
+      types: formValue.eventType ? [formValue.eventType] : undefined,
       page: 1 // Reset to first page when filters change
     };
 
@@ -123,7 +123,7 @@ export class HistoryFilterBarComponent {
     this.filterForm.reset({
       fromDate: null,
       toDate: null,
-      types: []
+      eventType: null
     });
 
     this.reset.emit();

@@ -1,20 +1,24 @@
-<mat-drawer-container class="details-drawer-container" autosize>
-  <mat-drawer
-    #drawer
-    mode="side"
-    position="end"
-    [opened]="isOpen()"
-    class="details-drawer"
-  >
-    @if (event(); as eventData) {
+<div class="history-content">
+  <ng-content></ng-content>
+</div>
+
+@if (event(); as eventData) {
+  <div class="details-overlay">
+    <div class="overlay-backdrop" (click)="onClose()" aria-hidden="true"></div>
+    <section
+      class="details-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="event-details-title"
+    >
       <div class="drawer-content">
         <!-- Header -->
-        <div class="drawer-header flex items-center justify-between p-4 border-b border-outline-variant">
-          <div class="flex items-center gap-2">
-            <mat-icon [class]="'text-' + eventData.type.toLowerCase()">
-              {{ getEventTypeIcon(eventData.type) }}
+        <div class="drawer-header flex items-center justify-between p-6 border-b border-outline-variant/60">
+          <div class="flex items-center gap-3">
+            <mat-icon [class]="'text-' + eventData.eventType.toLowerCase()">
+              {{ getEventTypeIcon(eventData.eventType) }}
             </mat-icon>
-            <h2 class="text-xl font-semibold">{{ titleLabel }}</h2>
+            <h2 id="event-details-title" class="text-2xl font-semibold">{{ titleLabel }}</h2>
           </div>
           <button
             mat-icon-button
@@ -26,175 +30,196 @@
         </div>
 
         <!-- Body -->
-        <div class="drawer-body p-4 space-y-4">
+        <div class="drawer-body p-6 space-y-6">
           <!-- Common Fields -->
-          <div class="detail-field">
-            <label class="detail-label">{{ typeLabel }}</label>
-            <div class="detail-value">
-              <mat-chip>{{ eventData.type }}</mat-chip>
+          <div class="detail-field grid gap-2 md:grid-cols-2">
+            <div>
+              <label class="detail-label">{{ typeLabel }}</label>
+              <div class="detail-value">
+                <mat-chip>{{ eventData.eventType }}</mat-chip>
+              </div>
             </div>
-          </div>
 
-          <div class="detail-field">
-            <label class="detail-label">{{ timestampLabel }}</label>
-            <div class="detail-value">{{ formatTimestamp(eventData.timestampUtc) }}</div>
+            <div>
+              <label class="detail-label">{{ timestampLabel }}</label>
+              <div class="detail-value">{{ formatTimestamp(eventData.eventTime) }}</div>
+            </div>
           </div>
 
           <mat-divider></mat-divider>
 
           <!-- Food Event Fields -->
-          @if (eventData.type === 'Food') {
-            <div class="detail-field">
-              <label class="detail-label">{{ carbsLabel }}</label>
-              <div class="detail-value">{{ eventData.carbs_g }}g</div>
-            </div>
-
-            @if (eventData.meal_tag) {
-              <div class="detail-field">
-                <label class="detail-label">{{ mealTagLabel }}</label>
-                <div class="detail-value">{{ eventData.meal_tag }}</div>
-              </div>
-            }
-
-            @if (eventData.absorption_hint) {
-              <div class="detail-field">
-                <label class="detail-label">{{ absorptionHintLabel }}</label>
-                <div class="detail-value">{{ eventData.absorption_hint }}</div>
-              </div>
-            }
-
-            @if (eventData.note) {
-              <div class="detail-field">
-                <label class="detail-label">{{ noteLabel }}</label>
-                <div class="detail-value">{{ eventData.note }}</div>
-              </div>
-            }
-
-            <mat-divider></mat-divider>
-
-            <!-- Outcome Section -->
-            <div class="outcome-section">
-              <div class="flex items-center gap-2 mb-2">
-                <label class="detail-label">{{ outcomeLabel }}</label>
-                <mat-icon
-                  class="text-sm"
-                  [matTooltip]="outcomeTooltip"
-                  matTooltipPosition="above"
-                >
-                  info
-                </mat-icon>
-                <mat-chip class="outcome-badge">≈2h</mat-chip>
-              </div>
-
-              @if (outcomeLoading()) {
-                <div class="flex items-center gap-2">
-                  <mat-spinner diameter="20"></mat-spinner>
-                  <span class="text-sm text-on-surface-variant">Loading...</span>
+          @if (eventData.eventType === 'Food') {
+            <div class="detail-section space-y-4">
+              <div class="detail-field grid gap-4 md:grid-cols-2">
+                <div>
+                  <label class="detail-label">{{ carbsLabel }}</label>
+                  <div class="detail-value">{{ eventData.carbohydratesGrams }}g</div>
                 </div>
-              } @else if (outcomeError()) {
-                <div class="outcome-error">
-                  <p class="text-sm text-error">{{ outcomeError() }}</p>
-                  <button mat-stroked-button color="primary" (click)="onRetry()">
-                    {{ retryLabel }}
-                  </button>
-                </div>
-              } @else if (outcome(); as outcomeData) {
-                @if (outcomeData.available && outcomeData.glucoseMgdl) {
-                  <div class="outcome-value">
-                    <span class="text-2xl font-bold text-primary">
-                      {{ outcomeData.glucoseMgdl }} mg/dL
-                    </span>
-                    <span class="text-sm text-on-surface-variant ml-2">
-                      {{ formatTimestamp(outcomeData.outcomeTimestampUtc!) }}
-                    </span>
+
+                @if (getMealTagLabel(eventData.mealTagId)) {
+                  <div>
+                    <label class="detail-label">{{ mealTagLabel }}</label>
+                    <div class="detail-value">{{ getMealTagLabel(eventData.mealTagId) }}</div>
                   </div>
-                } @else {
+                }
+              </div>
+
+              @if (eventData.absorptionHint) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ absorptionHintLabel }}</label>
+                  <div class="detail-value">{{ eventData.absorptionHint }}</div>
+                </div>
+              }
+
+              @if (eventData.note) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ noteLabel }}</label>
+                  <div class="detail-value">{{ eventData.note }}</div>
+                </div>
+              }
+
+              <mat-divider></mat-divider>
+
+              <!-- Outcome Section -->
+              <div class="outcome-section">
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                  <label class="detail-label">{{ outcomeLabel }}</label>
+                  <mat-icon
+                    class="text-sm"
+                    [matTooltip]="outcomeTooltip"
+                    matTooltipPosition="above"
+                  >
+                    info
+                  </mat-icon>
+                  <mat-chip class="outcome-badge">≈2h</mat-chip>
+                </div>
+
+                @if (outcomeLoading()) {
+                  <div class="flex items-center gap-3">
+                    <mat-spinner diameter="20"></mat-spinner>
+                    <span class="text-sm text-on-surface-variant">Loading...</span>
+                  </div>
+                } @else if (outcomeError()) {
+                  <div class="outcome-error">
+                    <p class="text-sm text-error">{{ outcomeError() }}</p>
+                    <button mat-stroked-button color="primary" (click)="onRetry()">
+                      {{ retryLabel }}
+                    </button>
+                  </div>
+                } @else if (outcomeUnavailable()) {
                   <div class="outcome-not-available">
                     <span class="text-sm text-on-surface-variant">
                       {{ outcomeNotAvailable }}
                     </span>
                   </div>
+                } @else if (outcome(); as outcomeData) {
+                  @if (outcomeData.glucoseValue != null) {
+                    <div class="outcome-value">
+                      <span class="text-3xl font-bold text-primary">
+                        {{ outcomeData.glucoseValue }} mg/dL
+                      </span>
+                      <span class="text-sm text-on-surface-variant">
+                        {{ formatTimestamp(outcomeData.outcomeTime) }}
+                      </span>
+                    </div>
+                  } @else {
+                    <div class="outcome-not-available">
+                      <span class="text-sm text-on-surface-variant">
+                        {{ outcomeNotAvailable }}
+                      </span>
+                    </div>
+                  }
                 }
-              }
+              </div>
             </div>
           }
 
           <!-- Insulin Event Fields -->
-          @if (eventData.type === 'Insulin') {
-            <div class="detail-field">
-              <label class="detail-label">{{ insulinUnitsLabel }}</label>
-              <div class="detail-value">{{ eventData.insulin_units }}U</div>
+          @if (eventData.eventType === 'Insulin') {
+            <div class="detail-section space-y-4">
+              <div class="detail-field grid gap-4 md:grid-cols-2">
+                <div>
+                  <label class="detail-label">{{ insulinTypeLabel }}</label>
+                  <div class="detail-value">{{ eventData.insulinType }}</div>
+                </div>
+
+                <div>
+                  <label class="detail-label">{{ insulinUnitsLabel }}</label>
+                  <div class="detail-value">{{ eventData.insulinUnits }}U</div>
+                </div>
+              </div>
+
+              @if (eventData.preparation) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ preparationLabel }}</label>
+                  <div class="detail-value">{{ eventData.preparation }}</div>
+                </div>
+              }
+
+              @if (eventData.delivery) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ deliveryLabel }}</label>
+                  <div class="detail-value">{{ eventData.delivery }}</div>
+                </div>
+              }
+
+              @if (eventData.timing) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ timingLabel }}</label>
+                  <div class="detail-value">{{ eventData.timing }}</div>
+                </div>
+              }
+
+              @if (eventData.note) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ noteLabel }}</label>
+                  <div class="detail-value">{{ eventData.note }}</div>
+                </div>
+              }
             </div>
-
-            @if (eventData.preparation) {
-              <div class="detail-field">
-                <label class="detail-label">{{ preparationLabel }}</label>
-                <div class="detail-value">{{ eventData.preparation }}</div>
-              </div>
-            }
-
-            @if (eventData.delivery) {
-              <div class="detail-field">
-                <label class="detail-label">{{ deliveryLabel }}</label>
-                <div class="detail-value">{{ eventData.delivery }}</div>
-              </div>
-            }
-
-            @if (eventData.timing) {
-              <div class="detail-field">
-                <label class="detail-label">{{ timingLabel }}</label>
-                <div class="detail-value">{{ eventData.timing }}</div>
-              </div>
-            }
-
-            @if (eventData.note) {
-              <div class="detail-field">
-                <label class="detail-label">{{ noteLabel }}</label>
-                <div class="detail-value">{{ eventData.note }}</div>
-              </div>
-            }
           }
 
           <!-- Exercise Event Fields -->
-          @if (eventData.type === 'Exercise') {
-            <div class="detail-field">
-              <label class="detail-label">{{ exerciseTypeLabel }}</label>
-              <div class="detail-value">{{ eventData.exercise_type }}</div>
-            </div>
+          @if (eventData.eventType === 'Exercise') {
+            <div class="detail-section space-y-4">
+              <div class="detail-field grid gap-4 md:grid-cols-2">
+                <div>
+                  <label class="detail-label">{{ exerciseTypeLabel }}</label>
+                  <div class="detail-value">{{ getExerciseTypeLabel(eventData.exerciseTypeId) || eventData.exerciseTypeId }}</div>
+                </div>
 
-            <div class="detail-field">
-              <label class="detail-label">{{ durationLabel }}</label>
-              <div class="detail-value">{{ eventData.duration_min }} minutes</div>
-            </div>
-
-            @if (eventData.intensity) {
-              <div class="detail-field">
-                <label class="detail-label">{{ intensityLabel }}</label>
-                <div class="detail-value">{{ eventData.intensity }}</div>
+                <div>
+                  <label class="detail-label">{{ durationLabel }}</label>
+                  <div class="detail-value">{{ eventData.durationMinutes }} minutes</div>
+                </div>
               </div>
-            }
 
-            @if (eventData.start_time_utc) {
-              <div class="detail-field">
-                <label class="detail-label">{{ startTimeLabel }}</label>
-                <div class="detail-value">{{ formatTimestamp(eventData.start_time_utc) }}</div>
-              </div>
-            }
+              @if (eventData.intensity) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ intensityLabel }}</label>
+                  <div class="detail-value">{{ eventData.intensity }}</div>
+                </div>
+              }
+
+              @if (eventData.note) {
+                <div class="detail-field">
+                  <label class="detail-label">{{ noteLabel }}</label>
+                  <div class="detail-value">{{ eventData.note }}</div>
+                </div>
+              }
+            </div>
           }
 
           <!-- Note Event Fields -->
-          @if (eventData.type === 'Note') {
+          @if (eventData.eventType === 'Note') {
             <div class="detail-field">
               <label class="detail-label">{{ noteLabel }}</label>
-              <div class="detail-value whitespace-pre-wrap">{{ eventData.note }}</div>
+              <div class="detail-value whitespace-pre-wrap">{{ eventData.note ?? eventData.noteText }}</div>
             </div>
           }
         </div>
       </div>
-    }
-  </mat-drawer>
-
-  <mat-drawer-content>
-    <ng-content></ng-content>
-  </mat-drawer-content>
-</mat-drawer-container>
+    </section>
+  </div>
+}

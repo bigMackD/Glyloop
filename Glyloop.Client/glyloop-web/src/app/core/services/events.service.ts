@@ -50,11 +50,10 @@ export class EventsService {
     }
 
     if (filters.types && filters.types.length > 0) {
-      // If API supports multiple types, send as comma-separated or multiple params
-      // Assuming API accepts eventType multiple times
-      filters.types.forEach((type) => {
-        params = params.append('eventType', type);
-      });
+      const eventType = filters.types[0];
+      if (eventType) {
+        params = params.set('eventType', eventType);
+      }
     }
 
     return this.http
