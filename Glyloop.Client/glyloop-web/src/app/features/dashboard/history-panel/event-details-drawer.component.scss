@@ -1,0 +1,56 @@
+.details-drawer-container {
+  @apply h-full;
+}
+
+.details-drawer {
+  @apply w-full max-w-md;
+}
+
+.drawer-content {
+  @apply h-full flex flex-col;
+}
+
+.drawer-header {
+  @apply bg-surface-container;
+
+  h2 {
+    @apply m-0;
+  }
+}
+
+.drawer-body {
+  @apply flex-1 overflow-y-auto;
+}
+
+.detail-field {
+  @apply space-y-1;
+}
+
+.detail-label {
+  @apply block text-sm font-medium text-on-surface-variant;
+}
+
+.detail-value {
+  @apply text-base text-on-surface;
+}
+
+.outcome-section {
+  @apply bg-surface-container rounded-lg p-4;
+}
+
+.outcome-badge {
+  @apply text-xs;
+  height: 24px;
+}
+
+.outcome-value {
+  @apply flex flex-col gap-1;
+}
+
+.outcome-not-available {
+  @apply p-2 bg-surface-variant rounded;
+}
+
+.outcome-error {
+  @apply space-y-2;
+}

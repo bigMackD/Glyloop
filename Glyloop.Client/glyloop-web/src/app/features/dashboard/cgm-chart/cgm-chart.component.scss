@@ -1,0 +1,41 @@
+.cgm-chart-container {
+  @apply w-full h-full min-h-[400px] relative;
+}
+
+.chart-wrapper {
+  @apply w-full h-full relative;
+}
+
+.chart-canvas {
+  @apply w-full h-full;
+
+  &:focus {
+    @apply outline outline-2 outline-primary outline-offset-2;
+  }
+
+  &:focus-visible {
+    @apply outline outline-2 outline-primary;
+  }
+}
+
+.no-data-message {
+  @apply min-h-[400px];
+}
+
+.chart-instructions {
+  @apply opacity-70;
+  font-size: 0.75rem;
+}
+
+// Screen reader only
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

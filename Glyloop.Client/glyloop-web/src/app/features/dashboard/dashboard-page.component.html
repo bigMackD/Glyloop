@@ -1,0 +1,65 @@
+<div class="dashboard-page min-h-screen bg-app-bg p-6">
+  <!-- Header with Title and Add Event Button -->
+  <header class="dashboard-header flex items-center justify-between mb-6">
+    <h1 class="text-3xl font-bold text-text-primary m-0">{{ pageTitle }}</h1>
+    <button
+      (click)="openAddEventModal()"
+      class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-from to-primary-to hover:opacity-90 text-white rounded-lg font-medium transition-all shadow-lg shadow-primary/30"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+      {{ addEventButton }}
+    </button>
+  </header>
+
+  <!-- Main Content Grid -->
+  <div class="dashboard-content grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-6">
+    <!-- Chart Section -->
+    <section class="chart-section space-y-4">
+      <!-- Toolbar -->
+      <app-chart-toolbar
+        [activeRange]="activeRange()"
+        [pollState]="pollState()"
+        (rangeChange)="onRangeChange($event)"
+        (manualRefresh)="onManualRefresh()"
+      ></app-chart-toolbar>
+
+      <!-- Chart -->
+      <div class="chart-container bg-card-bg border border-card-border rounded-xl p-6">
+        <app-cgm-chart
+          [chartData]="chartData()"
+          [highlightEventId]="selectedEventId()"
+          [range]="activeRange()"
+          (eventSelect)="onEventSelect($event)"
+          (crosshairMove)="onCrosshairMove($event)"
+        ></app-cgm-chart>
+      </div>
+    </section>
+
+    <!-- Right Sidebar -->
+    <aside class="sidebar-section space-y-6">
+      <!-- TIR Summary -->
+      <div class="tir-container">
+        <app-tir-summary [tir]="tir()"></app-tir-summary>
+      </div>
+
+      <!-- History Panel -->
+      <div class="history-section">
+        <app-history-panel
+          [initialFilters]="historyFilters()"
+          [selectedEventId]="selectedEventId()"
+          (select)="onHistorySelect($event)"
+          (filtersChange)="onHistoryFiltersChange($event)"
+        ></app-history-panel>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Add Event Modal -->
+  <app-add-event-modal
+    [open]="addEventModalOpen()"
+    (close)="closeAddEventModal()"
+    (created)="onEventCreated($event)"
+  ></app-add-event-modal>
+</div>

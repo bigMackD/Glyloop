@@ -1,0 +1,55 @@
+<div class="history-panel-card bg-card-bg border border-card-border rounded-xl p-6">
+  <!-- Header -->
+  <div class="card-header mb-6">
+    <h3 class="text-lg font-semibold text-text-primary">{{ title }}</h3>
+  </div>
+
+  <div class="panel-content">
+    <!-- Filter Bar -->
+    <app-history-filter-bar
+      [filters]="currentFilters()"
+      (filtersChange)="onFiltersChange($event)"
+      (reset)="onFiltersReset()"
+    ></app-history-filter-bar>
+
+    <!-- Event List or Loading/Error State -->
+    <div class="list-container mt-4">
+      @if (loading()) {
+        <div class="loading-state flex items-center justify-center p-8">
+          <div class="flex items-center gap-3">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span class="text-text-secondary">{{ loadingMessage }}</span>
+          </div>
+        </div>
+      } @else if (error()) {
+        <div class="error-state flex items-center justify-center p-8">
+          <p class="text-error">{{ error() }}</p>
+        </div>
+      } @else {
+        <!-- Event Details Drawer with List -->
+        <app-event-details-drawer
+          [event]="selectedEvent()"
+          (close)="onDetailsClose()"
+        >
+          <app-history-virtual-list
+            [items]="events()"
+            [selectedEventId]="selectedEventId()"
+            (rowActivate)="onRowSelect($event)"
+          ></app-history-virtual-list>
+        </app-event-details-drawer>
+      }
+    </div>
+
+    <!-- Pagination Info -->
+    @if (!loading() && !error() && totalItems() > 0) {
+      <div class="pagination-info mt-4 text-sm text-text-secondary text-center">
+        <span>
+          Showing {{ events().length }} of {{ totalItems() }} events
+          @if (totalPages() > 1) {
+            (Page {{ currentFilters().page }} of {{ totalPages() }})
+          }
+        </span>
+      </div>
+    }
+  </div>
+</div>

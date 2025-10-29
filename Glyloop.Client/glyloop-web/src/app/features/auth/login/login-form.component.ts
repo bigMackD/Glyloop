@@ -2,7 +2,6 @@ import { Component, ChangeDetectionStrategy, input, output, signal, effect } fro
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { LoginFormModel } from '../../../core/models/auth.types';
@@ -14,7 +13,6 @@ import { LoginFormModel } from '../../../core/models/auth.types';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
     MatIconModule
   ],
   templateUrl: './login-form.component.html',

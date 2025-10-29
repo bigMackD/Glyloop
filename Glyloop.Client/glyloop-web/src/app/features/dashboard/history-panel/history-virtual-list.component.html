@@ -1,0 +1,61 @@
+<div class="history-virtual-list">
+  @if (items().length > 0) {
+    <cdk-virtual-scroll-viewport
+      [itemSize]="itemHeight"
+      class="list-viewport"
+      role="listbox"
+      [attr.aria-label]="'Event history list'"
+    >
+      <div
+        *cdkVirtualFor="let item of items(); let i = index; trackBy: trackByEventId"
+        class="history-list-item"
+        [class.selected]="isSelected(item.eventId)"
+        [attr.data-index]="i"
+        [attr.role]="'option'"
+        [attr.aria-selected]="isSelected(item.eventId)"
+        [attr.tabindex]="0"
+        (click)="onRowClick(item)"
+        (keydown)="onKeyDown($event, i)"
+      >
+        <!-- Event Type Icon -->
+        <div class="item-icon" [class]="getEventTypeColorClass(item.type)">
+          <mat-icon>{{ getEventTypeIcon(item.type) }}</mat-icon>
+        </div>
+
+        <!-- Event Details -->
+        <div class="item-details">
+          <div class="item-summary">{{ item.summary }}</div>
+          <div class="item-timestamp">{{ formatTimestamp(item.timestampUtc) }}</div>
+        </div>
+
+        <!-- Tags (if any) -->
+        @if (item.tags && item.tags.length > 0) {
+          <div class="item-tags">
+            <mat-chip-set>
+              @for (tag of item.tags; track tag) {
+                <mat-chip>{{ tag }}</mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+        }
+
+        <!-- Selection Indicator -->
+        @if (isSelected(item.eventId)) {
+          <div class="selection-indicator">
+            <mat-icon>chevron_right</mat-icon>
+          </div>
+        }
+      </div>
+    </cdk-virtual-scroll-viewport>
+  } @else {
+    <!-- No items state -->
+    <div class="no-items flex items-center justify-center p-8">
+      <div class="text-center">
+        <svg class="w-16 h-16 text-text-muted mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <p class="text-text-secondary">{{ noItemsMessage }}</p>
+      </div>
+    </div>
+  }
+</div>

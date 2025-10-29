@@ -149,6 +149,35 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Validates the current user session and returns user information.
+    /// </summary>
+    /// <returns>Current user information if session is valid</returns>
+    /// <response code="200">Session valid, returns user info</response>
+    /// <response code="401">Session invalid or expired</response>
+    [HttpGet("session")]
+    [Authorize]
+    [ProducesResponseType(typeof(SessionResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    public IActionResult GetSession()
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var emailClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+        
+        if (userIdClaim is null || emailClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Invalid Session",
+                Detail = "Session claims are invalid",
+                Status = StatusCodes.Status401Unauthorized
+            });
+        }
+        
+        var response = new SessionResponse(userId, emailClaim);
+        return Ok(response);
+    }
+
+    /// <summary>
     /// Refreshes the access token using the refresh token from cookies.
     /// </summary>
     /// <returns>New tokens set in cookies</returns>
@@ -230,8 +259,8 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true, // HTTPS only
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None, // Required for cross-origin (different ports/protocols) TODO
             Path = "/"
         };
 

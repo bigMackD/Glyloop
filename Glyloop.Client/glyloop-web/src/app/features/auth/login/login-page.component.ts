@@ -68,6 +68,7 @@ export class LoginPageComponent implements OnInit {
       .subscribe({
         next: (response) => {
           // Login successful - navigate to redirect target
+          console.log('Login successful - navigating to redirect target:', this.redirectTo);
           this.router.navigate([this.redirectTo]);
         },
         error: (err: HttpErrorResponse) => {

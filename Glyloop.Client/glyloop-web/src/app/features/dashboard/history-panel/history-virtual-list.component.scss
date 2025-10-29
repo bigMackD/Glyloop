@@ -1,0 +1,97 @@
+.history-virtual-list {
+  @apply w-full h-full;
+}
+
+.list-viewport {
+  @apply h-full min-h-[300px] max-h-[600px];
+}
+
+.history-list-item {
+  @apply flex items-center gap-3 p-4 cursor-pointer transition-all;
+  @apply border-b border-card-border;
+  @apply hover:bg-surface-variant;
+
+  &:focus {
+    @apply outline outline-2 outline-primary outline-offset-[-2px];
+  }
+
+  &:focus-visible {
+    @apply outline outline-2 outline-primary;
+  }
+
+  &.selected {
+    @apply bg-surface-variant;
+
+    .item-summary {
+      @apply font-semibold text-primary;
+    }
+  }
+
+  // Ensure large hit targets (min 48x48 per WCAG)
+  min-height: 72px;
+}
+
+.item-icon {
+  @apply flex items-center justify-center w-12 h-12 rounded-full;
+  @apply flex-shrink-0;
+
+  mat-icon {
+    @apply text-2xl;
+  }
+
+  &.event-type-food {
+    background-color: rgba(251, 146, 60, 0.15);
+    color: #fb923c;
+  }
+
+  &.event-type-insulin {
+    background-color: rgba(91, 141, 239, 0.15);
+    color: #5B8DEF;
+  }
+
+  &.event-type-exercise {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+  }
+
+  &.event-type-note {
+    background-color: rgba(168, 85, 247, 0.15);
+    color: #a855f7;
+  }
+}
+
+.item-details {
+  @apply flex-1 min-w-0;
+}
+
+.item-summary {
+  @apply text-base text-text-primary;
+  @apply truncate;
+}
+
+.item-timestamp {
+  @apply text-sm text-text-secondary mt-1;
+}
+
+.item-tags {
+  @apply flex-shrink-0;
+
+  mat-chip-set {
+    mat-chip {
+      @apply text-xs;
+      height: 24px;
+    }
+  }
+}
+
+.selection-indicator {
+  @apply flex-shrink-0 text-primary;
+
+  mat-icon {
+    @apply text-2xl;
+  }
+}
+
+.no-items {
+  @apply min-h-[300px];
+}

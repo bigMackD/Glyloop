@@ -1,0 +1,45 @@
+// Dashboard page styles are now primarily handled by Tailwind classes in the template
+// Keep only specific custom styles here
+
+.dashboard-page {
+  // Any component-specific overrides can go here
+}
+
+.chart-container {
+  min-height: 450px;
+}
+
+// Snackbar custom styles - Dark theme
+::ng-deep {
+  .snackbar-success {
+    .mdc-snackbar__surface {
+      background-color: #1f2937 !important;
+      border-left: 4px solid #10b981;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .mat-mdc-snack-bar-label {
+      color: #e5e7eb !important;
+    }
+
+    .mat-mdc-button {
+      color: #10b981 !important;
+    }
+  }
+
+  .snackbar-error {
+    .mdc-snackbar__surface {
+      background-color: #1f2937 !important;
+      border-left: 4px solid #ef4444;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .mat-mdc-snack-bar-label {
+      color: #e5e7eb !important;
+    }
+
+    .mat-mdc-button {
+      color: #ef4444 !important;
+    }
+  }
+}

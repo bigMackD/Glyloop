@@ -1,0 +1,229 @@
+<div class="add-event-modal-overlay" [class.open]="open()" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()" role="dialog" [attr.aria-modal]="true" [attr.aria-labelledby]="'modal-title'">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 id="modal-title" class="text-xl font-semibold">{{ title }}</h2>
+      <button mat-icon-button (click)="onClose()" [attr.aria-label]="cancelLabel">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Error Banner -->
+    @if (error()) {
+      <div class="error-banner">
+        <mat-icon>error</mat-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <!-- Tabs -->
+    <mat-tab-group
+      [selectedIndex]="activeTabIndex()"
+      (selectedIndexChange)="onTabChange($event)"
+      class="event-tabs"
+    >
+      <!-- Food Tab -->
+      <mat-tab [label]="foodTab">
+        <form [formGroup]="foodForm" class="event-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ carbsLabel }}</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="carbs_g"
+              [attr.aria-label]="carbsLabel"
+              min="0"
+              max="300"
+              step="1"
+            />
+            @if (foodForm.controls.carbs_g.hasError('required')) {
+              <mat-error i18n="@@dashboard.addEvent.food.carbs.required">Carbs are required</mat-error>
+            }
+            @if (foodForm.controls.carbs_g.hasError('min') || foodForm.controls.carbs_g.hasError('max')) {
+              <mat-error i18n="@@dashboard.addEvent.food.carbs.range">Must be between 0 and 300</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ mealTagLabel }}</mat-label>
+            <mat-select formControlName="meal_tag">
+              <mat-option [value]="''">None</mat-option>
+              @for (tag of mealTags; track tag) {
+                <mat-option [value]="tag">{{ tag }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ absorptionLabel }}</mat-label>
+            <mat-select formControlName="absorption_hint">
+              <mat-option [value]="''">None</mat-option>
+              @for (hint of absorptionHints; track hint) {
+                <mat-option [value]="hint">{{ hint }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ noteLabel }}</mat-label>
+            <textarea
+              matInput
+              formControlName="note"
+              rows="3"
+              maxlength="500"
+            ></textarea>
+            <mat-hint align="end">{{ foodForm.controls.note.value?.length || 0 }}/500</mat-hint>
+          </mat-form-field>
+        </form>
+      </mat-tab>
+
+      <!-- Insulin Tab -->
+      <mat-tab [label]="insulinTab">
+        <form [formGroup]="insulinForm" class="event-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ insulinUnitsLabel }}</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="insulin_units"
+              [attr.aria-label]="insulinUnitsLabel"
+              min="0"
+              max="100"
+              step="0.5"
+            />
+            @if (insulinForm.controls.insulin_units.hasError('required')) {
+              <mat-error i18n="@@dashboard.addEvent.insulin.units.required">Units are required</mat-error>
+            }
+            @if (insulinForm.controls.insulin_units.hasError('min') || insulinForm.controls.insulin_units.hasError('max')) {
+              <mat-error i18n="@@dashboard.addEvent.insulin.units.range">Must be between 0 and 100</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ preparationLabel }}</mat-label>
+            <mat-select formControlName="preparation">
+              <mat-option [value]="''">None</mat-option>
+              @for (prep of insulinPreparations; track prep) {
+                <mat-option [value]="prep">{{ prep }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ deliveryLabel }}</mat-label>
+            <mat-select formControlName="delivery">
+              <mat-option [value]="''">None</mat-option>
+              @for (del of insulinDeliveries; track del) {
+                <mat-option [value]="del">{{ del }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ timingLabel }}</mat-label>
+            <mat-select formControlName="timing">
+              <mat-option [value]="''">None</mat-option>
+              @for (time of insulinTimings; track time) {
+                <mat-option [value]="time">{{ time }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ noteLabel }}</mat-label>
+            <textarea
+              matInput
+              formControlName="note"
+              rows="3"
+              maxlength="500"
+            ></textarea>
+            <mat-hint align="end">{{ insulinForm.controls.note.value?.length || 0 }}/500</mat-hint>
+          </mat-form-field>
+        </form>
+      </mat-tab>
+
+      <!-- Exercise Tab -->
+      <mat-tab [label]="exerciseTab">
+        <form [formGroup]="exerciseForm" class="event-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ exerciseTypeLabel }}</mat-label>
+            <mat-select formControlName="type">
+              @for (type of exerciseTypes; track type) {
+                <mat-option [value]="type">{{ type }}</mat-option>
+              }
+            </mat-select>
+            @if (exerciseForm.controls.type.hasError('required')) {
+              <mat-error i18n="@@dashboard.addEvent.exercise.type.required">Type is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ durationLabel }}</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="duration_min"
+              [attr.aria-label]="durationLabel"
+              min="1"
+              max="300"
+              step="1"
+            />
+            @if (exerciseForm.controls.duration_min.hasError('required')) {
+              <mat-error i18n="@@dashboard.addEvent.exercise.duration.required">Duration is required</mat-error>
+            }
+            @if (exerciseForm.controls.duration_min.hasError('min') || exerciseForm.controls.duration_min.hasError('max')) {
+              <mat-error i18n="@@dashboard.addEvent.exercise.duration.range">Must be between 1 and 300</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ intensityLabel }}</mat-label>
+            <mat-select formControlName="intensity">
+              <mat-option [value]="''">None</mat-option>
+              @for (int of intensities; track int) {
+                <mat-option [value]="int">{{ int }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </form>
+      </mat-tab>
+
+      <!-- Note Tab -->
+      <mat-tab [label]="noteTab">
+        <form [formGroup]="noteForm" class="event-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ noteLabel }}</mat-label>
+            <textarea
+              matInput
+              formControlName="note"
+              rows="5"
+              maxlength="500"
+            ></textarea>
+            @if (noteForm.controls.note.hasError('required')) {
+              <mat-error i18n="@@dashboard.addEvent.note.required">Note is required</mat-error>
+            }
+            <mat-hint align="end">{{ noteForm.controls.note.value?.length || 0 }}/500</mat-hint>
+          </mat-form-field>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Footer Actions -->
+    <div class="modal-footer">
+      <button mat-stroked-button (click)="onClose()" [disabled]="isSubmitting()">
+        {{ cancelLabel }}
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onSubmit()"
+        [disabled]="isSubmitting() || getCurrentForm().invalid"
+      >
+        @if (isSubmitting()) {
+          <mat-spinner diameter="20" class="inline-spinner"></mat-spinner>
+        }
+        {{ submitLabel }}
+      </button>
+    </div>
+  </div>
+</div>
