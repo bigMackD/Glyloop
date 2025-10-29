@@ -31,7 +31,9 @@ export class RegisterPageComponent {
     this.serverError.set(undefined);
     this.emailTaken.set(false);
 
-    this.authApi.register(model)
+    // Extract only email and password for API (confirmPassword is client-side only)
+    const { email, password } = model;
+    this.authApi.register({ email, password })
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {

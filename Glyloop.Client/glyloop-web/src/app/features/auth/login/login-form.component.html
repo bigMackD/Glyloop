@@ -1,10 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
   <!-- Server Error Message -->
   @if (serverError()) {
-    <div 
+    <div
       class="rounded-md bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800"
       role="alert"
-      aria-live="polite"
+      aria-live="assertive"
       aria-atomic="true">
       <div class="flex">
         <div class="flex-shrink-0">
@@ -24,15 +24,16 @@
   <div class="space-y-4">
     <!-- Email Field -->
     <mat-form-field appearance="outline" class="w-full">
-      <mat-label i18n="@@register.form.email.label">Email address</mat-label>
+      <mat-label i18n="@@login.form.email.label">Email address</mat-label>
       <input
         matInput
-        id="register-email"
+        id="login-email"
         type="email"
         formControlName="email"
         autocomplete="email"
-        i18n-placeholder="@@register.form.email.placeholder"
+        i18n-placeholder="@@login.form.email.placeholder"
         placeholder="you@example.com"
+        [autofocus]="autofocusEmail()"
         [attr.aria-describedby]="emailControl.invalid && emailControl.touched ? 'email-error' : null"
         [attr.aria-invalid]="emailControl.invalid && emailControl.touched" />
       @if (emailControl.invalid && emailControl.touched) {
@@ -40,26 +41,20 @@
           {{ getEmailErrorMessage() }}
         </mat-error>
       }
-      @if (emailControl.hasError('emailTaken')) {
-        <mat-hint class="text-red-600 dark:text-red-400">
-          <ng-container i18n="@@register.form.email.alreadyExists">Already have an account?</ng-container>
-          <a href="/login" class="underline" i18n="@@register.form.email.loginLink">Log in here</a>
-        </mat-hint>
-      }
     </mat-form-field>
 
     <!-- Password Field -->
     <mat-form-field appearance="outline" class="w-full">
-      <mat-label i18n="@@register.form.password.label">Password</mat-label>
+      <mat-label i18n="@@login.form.password.label">Password</mat-label>
       <input
         matInput
-        id="register-password"
+        id="login-password"
         [type]="hidePassword() ? 'password' : 'text'"
         formControlName="password"
-        autocomplete="new-password"
-        i18n-placeholder="@@register.form.password.placeholder"
-        placeholder="At least 12 characters"
-        [attr.aria-describedby]="passwordControl.invalid && passwordControl.touched ? 'password-error' : 'password-hint'"
+        autocomplete="current-password"
+        i18n-placeholder="@@login.form.password.placeholder"
+        placeholder="Enter your password"
+        [attr.aria-describedby]="passwordControl.invalid && passwordControl.touched ? 'password-error' : null"
         [attr.aria-invalid]="passwordControl.invalid && passwordControl.touched" />
       <button
         matSuffix
@@ -76,41 +71,12 @@
         </mat-error>
       }
     </mat-form-field>
-
-    <!-- Confirm Password Field -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label i18n="@@register.form.confirmPassword.label">Confirm password</mat-label>
-      <input
-        matInput
-        id="register-confirm-password"
-        [type]="hideConfirmPassword() ? 'password' : 'text'"
-        formControlName="confirmPassword"
-        autocomplete="new-password"
-        i18n-placeholder="@@register.form.confirmPassword.placeholder"
-        placeholder="Re-enter your password"
-        [attr.aria-describedby]="(confirmPasswordControl.invalid && confirmPasswordControl.touched) ? 'confirm-password-error' : ((confirmPasswordControl.pristine || confirmPasswordControl.value === '') ? 'confirm-password-hint' : null)"
-        [attr.aria-invalid]="confirmPasswordControl.invalid && confirmPasswordControl.touched" />
-      <button
-        matSuffix
-        mat-icon-button
-        type="button"
-        (click)="toggleConfirmPasswordVisibility()"
-        [attr.aria-label]="getConfirmPasswordVisibilityLabel()"
-        [attr.aria-pressed]="!hideConfirmPassword()">
-        <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-      </button>
-      @if (confirmPasswordControl.invalid && confirmPasswordControl.touched) {
-        <mat-error id="confirm-password-error">
-          {{ getConfirmPasswordErrorMessage() }}
-        </mat-error>
-      }
-    </mat-form-field>
   </div>
 
   <!-- Aria-live region for form errors -->
   <div class="sr-only" aria-live="polite" aria-atomic="true">
     @if (form.invalid && form.touched) {
-      <span i18n="@@register.form.validation.error">Form has errors. Please correct them and try again.</span>
+      <span i18n="@@login.form.validation.error">Form has errors. Please correct them and try again.</span>
     }
   </div>
 
@@ -128,12 +94,11 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <ng-container i18n="@@register.form.submit.loading">Creating account...</ng-container>
+          <ng-container i18n="@@login.form.submit.loading">Signing in...</ng-container>
         </span>
       } @else {
-        <ng-container i18n="@@register.form.submit.button">Create account</ng-container>
+        <ng-container i18n="@@login.form.submit.button">Sign in</ng-container>
       }
     </button>
   </div>
 </form>
-
