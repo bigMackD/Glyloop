@@ -1,7 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { RegisterRequest, RegisterResponse } from '../models/auth.types';
+import {
+  RegisterRequest,
+  RegisterResponse,
+  LoginRequest,
+  LoginResponse
+} from '../models/auth.types';
 import { API_CONFIG } from '../config/api.config';
 
 @Injectable({ providedIn: 'root' })
@@ -15,9 +20,20 @@ export class AuthApiService {
 
   register(body: RegisterRequest): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(
-      this.buildUrl('/api/auth/register'), 
+      this.buildUrl('/api/auth/register'),
       body,
       { observe: 'body' }
+    );
+  }
+
+  login(body: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
+      this.buildUrl('/api/auth/login'),
+      body,
+      {
+        observe: 'body',
+        withCredentials: true // Allow backend to set httpOnly cookies
+      }
     );
   }
 }

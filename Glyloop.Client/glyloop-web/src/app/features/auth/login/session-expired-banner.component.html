@@ -1,0 +1,31 @@
+@if (!dismissed()) {
+  <div
+    class="rounded-md bg-yellow-50 dark:bg-yellow-900/20 p-4 border border-yellow-200 dark:border-yellow-800 mb-6"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <mat-icon class="text-yellow-600 dark:text-yellow-400" aria-hidden="true">info</mat-icon>
+      </div>
+      <div class="ml-3 flex-1">
+        <p class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+          {{ message() }}
+        </p>
+      </div>
+      <div class="ml-auto pl-3">
+        <div class="-mx-1.5 -my-1.5">
+          <button
+            mat-icon-button
+            type="button"
+            (click)="dismiss()"
+            class="!text-yellow-600 dark:!text-yellow-400"
+            i18n-aria-label="@@login.banner.dismiss.label"
+            aria-label="Dismiss notification">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

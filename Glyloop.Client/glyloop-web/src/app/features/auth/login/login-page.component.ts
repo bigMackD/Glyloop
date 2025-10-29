@@ -1,49 +1,106 @@
 import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
+
+import { SessionExpiredBannerComponent } from './session-expired-banner.component';
+import { LoginFormComponent } from './login-form.component';
+import { AuthFooterLinksComponent } from './auth-footer-links.component';
+import { AuthApiService } from '../../../core/services/auth-api.service';
+import { LoginFormModel } from '../../../core/models/auth.types';
+import { ProblemDetails } from '../../../core/models/common.types';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [],
-  template: `
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4">
-      <div class="max-w-md w-full">
-        <h1 class="text-center text-3xl font-extrabold text-white mb-8">
-          Login
-        </h1>
-        
-        @if (registeredSuccessfully()) {
-          <div class="rounded-md bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800 mb-6" role="alert">
-            <div class="text-sm text-green-800 dark:text-green-200">
-              <strong>Account created successfully!</strong> Please log in to continue.
-            </div>
-          </div>
-        }
-        
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
-          <p class="text-gray-700 dark:text-gray-300">
-            Login page placeholder. The registration flow has been implemented successfully!
-          </p>
-          <a href="/register" class="mt-4 inline-block text-blue-600 hover:text-blue-500 dark:text-blue-400">
-            ← Back to Register
-          </a>
-        </div>
-      </div>
-    </div>
-  `,
+  imports: [
+    SessionExpiredBannerComponent,
+    LoginFormComponent,
+    AuthFooterLinksComponent
+  ],
+  templateUrl: './login-page.component.html',
+  styleUrl: './login-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginPageComponent implements OnInit {
+  private readonly authApi = inject(AuthApiService);
+  private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  readonly registeredSuccessfully = signal(false);
+
+  // State signals
+  readonly isSubmitting = signal(false);
+  readonly serverError = signal<string | undefined>(undefined);
+  readonly fieldErrors = signal<{ email?: string; password?: string } | undefined>(undefined);
+  readonly showSessionExpired = signal(false);
+  readonly showRegistrationSuccess = signal(false);
+  private redirectTo = '/dashboard'; // Default redirect target
+
+  // Localized strings
+  readonly pageTitle = $localize`:@@login.title:Sign in to your account`;
+  readonly pageSubtitle = $localize`:@@login.subtitle:Welcome back to Glyloop`;
+  readonly registrationSuccessTitle = $localize`:@@login.registrationSuccess.title:Account created successfully!`;
+  readonly registrationSuccessMessage = $localize`:@@login.registrationSuccess.message:Please sign in with your new account.`;
 
   ngOnInit(): void {
-    // Check if user was redirected from successful registration
-    this.route.queryParams.subscribe(params => {
-      if (params['registered'] === 'true') {
-        this.registeredSuccessfully.set(true);
+    // Read query params
+    const queryParams = this.route.snapshot.queryParams;
+
+    if (queryParams['reason'] === 'sessionExpired') {
+      this.showSessionExpired.set(true);
+    }
+
+    if (queryParams['registered'] === 'true') {
+      this.showRegistrationSuccess.set(true);
+    }
+
+    if (queryParams['redirect']) {
+      this.redirectTo = queryParams['redirect'];
+    }
+  }
+
+  onSubmit(model: LoginFormModel): void {
+    this.isSubmitting.set(true);
+    this.serverError.set(undefined);
+    this.fieldErrors.set(undefined);
+
+    this.authApi.login(model)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: (response) => {
+          // Login successful - navigate to redirect target
+          this.router.navigate([this.redirectTo]);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.handleLoginError(err);
+        }
+      });
+  }
+
+  private handleLoginError(err: HttpErrorResponse): void {
+    const problem = err.error as ProblemDetails | undefined;
+
+    if (err.status === 401) {
+      // Authentication failed
+      if (problem?.title?.includes('Account Locked')) {
+        // Account lockout
+        this.serverError.set($localize`:@@login.error.accountLocked:Your account has been locked due to multiple failed login attempts. Please try again later or contact support.`);
+      } else {
+        // Generic auth failure - keep email, suggest checking credentials
+        this.serverError.set($localize`:@@login.error.invalidCredentials:Invalid email or password. Please check your credentials and try again.`);
       }
-    });
+    } else if (err.status === 400) {
+      // Bad request - map to field errors if available
+      if (problem?.detail) {
+        this.serverError.set(problem.detail);
+      } else {
+        this.serverError.set($localize`:@@login.error.badRequest:Invalid request. Please check your input and try again.`);
+      }
+    } else if (err.status === 0) {
+      // Network error
+      this.serverError.set($localize`:@@login.error.network:Cannot reach server. Check connection and try again.`);
+    } else {
+      // Generic fallback
+      this.serverError.set($localize`:@@login.error.generic:Login failed. Please try again.`);
+    }
   }
 }
-
