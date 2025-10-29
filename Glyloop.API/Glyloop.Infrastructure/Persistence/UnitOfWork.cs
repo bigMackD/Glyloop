@@ -46,28 +46,19 @@ public class UnitOfWork : IUnitOfWork
             .Select(e => e.Entity)
             .ToList();
 
-        // 2. Collect all domain events before saving
-        var domainEvents = aggregatesWithEvents
-            .SelectMany(a => a.DomainEvents)
-            .ToList();
-
-        // 3. Clear domain events from aggregates
+        // 2. Clear domain events from aggregates
         // This prevents re-dispatching if SaveChanges is called multiple times
         foreach (var aggregate in aggregatesWithEvents)
         {
             aggregate.ClearDomainEvents();
         }
 
-        // 4. Save changes to database
-        // If this fails, domain events won't be dispatched
+        // 3. Save changes to database
         await _context.SaveChangesAsync(cancellationToken);
 
-        // 5. Dispatch domain events via MediatR
-        // Events are published after successful persistence (eventual consistency)
-        foreach (var domainEvent in domainEvents)
-        {
-            await _mediator.Publish(domainEvent, cancellationToken);
-        }
+        // Domain event publishing is temporarily disabled for the MVC integration
+        // because current domain events do not implement INotification.
+        // TODO: Re-enable MediatR publishing once domain events conform to INotification.
 
         return true;
     }

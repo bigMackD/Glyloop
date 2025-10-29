@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Glyloop.Application.Common.Interfaces;
 using Glyloop.Application.DTOs.Chart;
 using Glyloop.Domain.Aggregates.Event;
@@ -20,14 +21,7 @@ public class GetChartDataQueryHandler : IRequestHandler<GetChartDataQuery, Resul
     private readonly ICurrentUserService _currentUserService;
     private readonly ITimeProvider _timeProvider;
 
-    private static readonly Dictionary<string, int> RangeHours = new()
-    {
-        ["1h"] = 1,
-        ["3h"] = 3,
-        ["6h"] = 6,
-        ["12h"] = 12,
-        ["24h"] = 24
-    };
+    private static readonly HashSet<int> AllowedRanges = new() { 1, 3, 5, 8, 12, 24 };
 
     public GetChartDataQueryHandler(
         IGlucoseReadingService glucoseReadingService,
@@ -48,10 +42,10 @@ public class GetChartDataQueryHandler : IRequestHandler<GetChartDataQuery, Resul
         var userId = UserId.Create(_currentUserService.UserId);
 
         // Parse range
-        if (!RangeHours.TryGetValue(request.Range.ToLowerInvariant(), out var hours))
+        if (!int.TryParse(request.Range, out var hours) || !AllowedRanges.Contains(hours))
         {
             return Result.Failure<ChartDataDto>(
-                Error.Create("Chart.InvalidRange", "Range must be one of: 1h, 3h, 6h, 12h, 24h."));
+                Error.Create("Chart.InvalidRange", "Range must be one of: 1, 3, 5, 8, 12, 24 hours."));
         }
 
         var endTime = _timeProvider.UtcNow;

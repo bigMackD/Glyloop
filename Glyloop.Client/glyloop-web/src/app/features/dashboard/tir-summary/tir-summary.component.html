@@ -1,0 +1,90 @@
+<div class="tir-summary-card bg-card-bg border border-card-border rounded-xl p-6">
+  <!-- Header -->
+  <div class="card-header flex items-center gap-2 mb-6">
+    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+    </svg>
+    <h3 class="text-lg font-semibold text-text-primary">{{ title }}</h3>
+  </div>
+
+  @if (tir(); as tirData) {
+    <!-- Circular Progress Indicator -->
+    <div class="tir-circle-container flex justify-center mb-6">
+      <div class="relative w-40 h-40">
+        <!-- Background circle -->
+        <svg class="w-full h-full transform -rotate-90">
+          <circle
+            cx="80"
+            cy="80"
+            r="70"
+            stroke="#374151"
+            stroke-width="8"
+            fill="none"
+          />
+          <!-- Progress circle -->
+          <circle
+            cx="80"
+            cy="80"
+            r="70"
+            [attr.stroke]="getProgressColor()"
+            stroke-width="8"
+            fill="none"
+            stroke-linecap="round"
+            [style.stroke-dasharray]="getProgressDashArray()"
+            [style.stroke-dashoffset]="getProgressDashOffset()"
+            class="transition-all duration-500"
+          />
+        </svg>
+        <!-- Center text -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span class="text-4xl font-bold" [style.color]="getProgressColor()">{{ tirPercentage() }}%</span>
+          <span class="text-xs uppercase tracking-wide text-text-muted mt-1">{{ inRangeLabel }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown Bars -->
+    <div class="tir-breakdown space-y-3 mb-6">
+      <!-- In Range -->
+      <div class="breakdown-item bg-glucose-in-range-bg border border-glucose-in-range-border rounded-lg p-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-glucose-in-range">{{ inRangeLabel }}</span>
+          <span class="text-sm font-semibold text-glucose-in-range">{{ tirData.readingsInRange }} ({{ tirPercentage() }}%)</span>
+        </div>
+      </div>
+
+      <!-- Below Range -->
+      <div class="breakdown-item bg-glucose-below-range-bg border border-glucose-below-range-border rounded-lg p-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-glucose-below-range">{{ belowRangeLabel }}</span>
+          <span class="text-sm font-semibold text-glucose-below-range">{{ tirData.readingsBelowRange }} ({{ belowPercentage() }}%)</span>
+        </div>
+      </div>
+
+      <!-- Above Range -->
+      <div class="breakdown-item bg-glucose-above-range-bg border border-glucose-above-range-border rounded-lg p-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-glucose-above-range">{{ aboveRangeLabel }}</span>
+          <span class="text-sm font-semibold text-glucose-above-range">{{ tirData.readingsAboveRange }} ({{ abovePercentage() }}%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Target Range Display -->
+    <div class="target-range-display pt-4 border-t border-card-border space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-text-secondary">{{ targetRangeLabel }}:</span>
+        <span class="text-sm font-medium text-text-primary">{{ targetRangeText() }}</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-text-secondary">{{ totalReadingsLabel }}:</span>
+        <span class="text-sm font-medium text-text-primary">{{ tirData.totalReadings }}</span>
+      </div>
+    </div>
+  } @else {
+    <!-- No data state -->
+    <div class="no-data flex items-center justify-center p-8">
+      <p class="text-text-secondary">{{ noDataMessage }}</p>
+    </div>
+  }
+</div>

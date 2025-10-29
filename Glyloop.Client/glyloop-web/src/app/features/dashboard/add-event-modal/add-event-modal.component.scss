@@ -1,0 +1,60 @@
+.add-event-modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+  @apply invisible opacity-0 transition-all duration-300;
+
+  &.open {
+    @apply visible opacity-100;
+  }
+}
+
+.modal-content {
+  @apply bg-surface rounded-lg shadow-2xl max-w-2xl w-full mx-4;
+  @apply flex flex-col max-h-[90vh];
+}
+
+.modal-header {
+  @apply flex items-center justify-between p-6 border-b border-outline-variant;
+
+  h2 {
+    @apply m-0;
+  }
+}
+
+.error-banner {
+  @apply flex items-center gap-2 p-4 bg-error-container text-on-error-container;
+
+  mat-icon {
+    @apply text-error;
+  }
+}
+
+.event-tabs {
+  @apply flex-1 overflow-hidden;
+
+  ::ng-deep {
+    .mat-mdc-tab-body-wrapper {
+      @apply flex-1 overflow-y-auto;
+    }
+  }
+}
+
+.event-form {
+  @apply p-6 space-y-4;
+}
+
+.form-field {
+  @apply w-full;
+}
+
+.modal-footer {
+  @apply flex items-center justify-end gap-3 p-6 border-t border-outline-variant;
+
+  button {
+    @apply min-w-[100px];
+  }
+}
+
+.inline-spinner {
+  @apply inline-block mr-2;
+  vertical-align: middle;
+}

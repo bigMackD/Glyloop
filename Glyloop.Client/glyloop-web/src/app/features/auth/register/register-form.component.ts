@@ -2,7 +2,6 @@ import { Component, ChangeDetectionStrategy, input, output, signal, effect } fro
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { RegisterFormModel } from '../../../core/models/auth.types';
@@ -30,7 +29,6 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
     MatIconModule
   ],
   templateUrl: './register-form.component.html',

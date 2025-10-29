@@ -1,0 +1,25 @@
+.chart-toolbar {
+  @apply flex-wrap;
+
+  // Responsive: stack on narrow screens
+  @media (max-width: 768px) {
+    @apply flex-col items-start;
+  }
+}
+
+.range-selector {
+  button {
+    min-width: 48px;
+    
+    &:focus-visible {
+      @apply outline outline-2 outline-primary outline-offset-2;
+    }
+  }
+}
+
+.toolbar-info {
+  // Stack info items on very narrow screens
+  @media (max-width: 480px) {
+    @apply flex-col items-start gap-2;
+  }
+}

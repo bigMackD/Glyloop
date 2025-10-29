@@ -1,0 +1,78 @@
+<div class="history-filter-bar p-4 mb-4">
+  <form [formGroup]="filterForm" class="filter-form">
+    <div class="filter-controls flex flex-col gap-3">
+      <!-- Date Range Row -->
+      <div class="date-inputs flex gap-3">
+        <!-- From Date -->
+        <mat-form-field appearance="outline" class="filter-field flex-1">
+          <mat-label>{{ fromDateLabel }}</mat-label>
+          <input
+            matInput
+            [matDatepicker]="fromPicker"
+            formControlName="fromDate"
+            [attr.aria-label]="fromDateLabel"
+            class="bg-card-bg text-text-primary"
+          />
+          <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- To Date -->
+        <mat-form-field appearance="outline" class="filter-field flex-1">
+          <mat-label>{{ toDateLabel }}</mat-label>
+          <input
+            matInput
+            [matDatepicker]="toPicker"
+            formControlName="toDate"
+            [attr.aria-label]="toDateLabel"
+            class="bg-card-bg text-text-primary"
+          />
+          <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+          <mat-datepicker #toPicker></mat-datepicker>
+          @if (getDateRangeError(); as error) {
+            <mat-error>{{ error }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Event Type Dropdown -->
+      <mat-form-field appearance="outline" class="filter-field w-full">
+        <mat-label>{{ eventTypesLabel }}</mat-label>
+        <mat-select
+          formControlName="eventType"
+          [attr.aria-label]="eventTypesLabel"
+          class="bg-card-bg text-text-primary"
+        >
+          <mat-option [value]="null">{{ allTypesLabel }}</mat-option>
+          @for (type of eventTypes; track type) {
+            <mat-option [value]="type">{{ type }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Action Buttons -->
+      <div class="filter-actions flex gap-3">
+        <button
+          type="button"
+          (click)="applyFilters()"
+          [attr.aria-label]="applyLabel"
+          class="flex-1 px-4 py-2 bg-gradient-to-r from-primary-from to-primary-to hover:opacity-90 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-md"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+          </svg>
+          {{ applyLabel }}
+        </button>
+
+        <button
+          type="button"
+          (click)="onReset()"
+          [attr.aria-label]="resetLabel"
+          class="px-4 py-2 bg-card-bg hover:bg-surface-variant text-text-secondary border border-card-border rounded-lg font-medium transition-colors"
+        >
+          {{ resetLabel }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

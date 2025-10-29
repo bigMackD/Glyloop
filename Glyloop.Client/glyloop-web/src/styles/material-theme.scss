@@ -2,12 +2,12 @@
 
 @include mat.core();
 
-// Material 3 theme configuration
+// Material 3 theme configuration with custom dark theme colors
 $theme: mat.define-theme((
   color: (
     theme-type: dark,
-    primary: mat.$violet-palette,
-    tertiary: mat.$blue-palette,
+    primary: mat.$blue-palette,
+    tertiary: mat.$violet-palette,
   ),
   typography: (
     brand-family: 'Inter, system-ui, sans-serif',
@@ -19,3 +19,113 @@ $theme: mat.define-theme((
 ));
 
 @include mat.all-component-themes($theme);
+
+// Custom overrides for dark theme to match our design
+:root {
+  // Override Material system colors
+  --mat-sys-primary: #5B8DEF;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-background: #111827;
+  --mat-sys-surface: #1f2937;
+  --mat-sys-surface-variant: #374151;
+  --mat-sys-on-surface: #e5e7eb;
+  --mat-sys-on-surface-variant: #9ca3af;
+  --mat-sys-outline: #4b5563;
+  --mat-sys-outline-variant: #374151;
+  
+  // Form field colors
+  --mdc-outlined-text-field-container-shape: 8px;
+  --mdc-outlined-text-field-focus-outline-color: #5B8DEF;
+  --mdc-outlined-text-field-hover-outline-color: #4a7dd8;
+  --mdc-outlined-text-field-outline-color: #3a3d4a;
+}
+
+// Additional Material component customizations
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    background-color: transparent;
+  }
+  
+  .mat-mdc-form-field-focus-overlay {
+    background-color: transparent;
+  }
+}
+
+// Global outlined field styling - remove vertical notch lines
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined {
+  .mat-mdc-form-field-focus-overlay {
+    opacity: 0;
+  }
+
+  .mdc-notched-outline__leading {
+    border-right-style: none;
+    width: 12px;
+  }
+
+  .mdc-notched-outline__notch {
+    border-left-style: none;
+    border-right-style: none;
+  }
+
+  .mdc-notched-outline__trailing {
+    border-left-style: none;
+  }
+}
+
+.mat-mdc-select-panel {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.mat-mdc-option {
+  &:hover:not(.mat-mdc-option-disabled) {
+    background-color: #374151;
+  }
+  
+  &.mat-mdc-option-active {
+    background-color: rgba(91, 141, 239, 0.12);
+  }
+  
+  &.mdc-list-item--selected:not(.mat-mdc-option-multiple) {
+    background-color: rgba(91, 141, 239, 0.2);
+  }
+}
+
+.mat-datepicker-content {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  
+  .mat-calendar {
+    background-color: #1f2937;
+  }
+  
+  .mat-calendar-body-selected {
+    background-color: #5B8DEF;
+    color: #ffffff;
+  }
+  
+  .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+    background-color: rgba(91, 141, 239, 0.12);
+  }
+}
+
+// Snackbar/Toast dark theme overrides
+.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .mat-mdc-snack-bar-label {
+    color: #e5e7eb;
+  }
+
+  .mat-mdc-button {
+    color: #5B8DEF;
+    
+    &:hover {
+      background-color: rgba(91, 141, 239, 0.1);
+    }
+  }
+}

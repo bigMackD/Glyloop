@@ -1,0 +1,22 @@
+.tir-summary-card {
+  @apply h-full;
+}
+
+.tir-circle-container {
+  // Circular progress animation
+  circle {
+    transition: stroke-dashoffset 0.5s ease-in-out, stroke 0.3s ease-in-out;
+  }
+}
+
+.breakdown-item {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    @apply opacity-90 scale-[1.02];
+  }
+}
+
+.no-data {
+  @apply min-h-[200px];
+}

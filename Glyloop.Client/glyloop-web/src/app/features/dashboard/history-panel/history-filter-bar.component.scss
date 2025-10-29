@@ -1,0 +1,32 @@
+.history-filter-bar {
+  @apply sticky top-0 z-10;
+}
+
+.filter-form {
+  @apply w-full;
+}
+
+.filter-controls {
+  // Responsive layout handled by flex classes in template
+}
+
+.filter-field {
+  // Full width on mobile
+  @media (max-width: 768px) {
+    @apply w-full;
+  }
+}
+
+.date-inputs {
+  @media (max-width: 640px) {
+    @apply flex-col;
+  }
+}
+
+.filter-actions {
+  button {
+    &:focus-visible {
+      @apply outline outline-2 outline-primary outline-offset-2;
+    }
+  }
+}

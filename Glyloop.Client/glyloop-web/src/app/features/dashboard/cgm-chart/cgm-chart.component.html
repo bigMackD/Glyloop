@@ -1,0 +1,35 @@
+<div class="cgm-chart-container">
+  @if (hasData()) {
+    <div class="chart-wrapper">
+      <canvas
+        #chartCanvas
+        class="chart-canvas"
+        role="img"
+        [attr.aria-label]="glucoseLabel"
+      ></canvas>
+
+      <!-- Accessible crosshair announcement (aria-live) -->
+      <div class="sr-only" aria-live="polite" aria-atomic="true">
+        @if (currentCrosshairIndex() >= 0) {
+          <span i18n="@@dashboard.chart.crosshair.announcement">
+            Point {{ currentCrosshairIndex() + 1 }} selected
+          </span>
+        }
+      </div>
+
+      <!-- Instructions for keyboard users -->
+      <div class="chart-instructions text-sm text-text-muted mt-2 text-center">
+        <span i18n="@@dashboard.chart.instructions">
+          Use arrow keys to navigate points, Shift+Arrow to jump 5 points, Enter to select event
+        </span>
+      </div>
+    </div>
+  } @else {
+    <div class="no-data-message flex flex-col items-center justify-center p-12 min-h-[400px]">
+      <svg class="w-16 h-16 text-text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      </svg>
+      <p class="text-text-secondary text-lg">{{ noDataMessage }}</p>
+    </div>
+  }
+</div>

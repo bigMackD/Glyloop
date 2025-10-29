@@ -1,0 +1,22 @@
+.history-panel-card {
+  @apply h-full flex flex-col;
+}
+
+.panel-content {
+  @apply flex-1 flex flex-col;
+  overflow: visible;
+}
+
+.list-container {
+  @apply flex-1;
+  overflow: visible;
+}
+
+.loading-state,
+.error-state {
+  @apply min-h-[300px];
+}
+
+.pagination-info {
+  @apply border-t border-card-border pt-4;
+}

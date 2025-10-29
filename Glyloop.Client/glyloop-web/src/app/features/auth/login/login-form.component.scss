@@ -7,25 +7,6 @@
       width: 100%;
     }
 
-    // Remove the vertical line (left border) from outline appearance
-    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-focus-overlay {
-      opacity: 0;
-    }
-
-    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline__leading {
-      border-right-style: none;
-      width: 12px;
-    }
-
-    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline__notch {
-      border-left-style: none;
-      border-right-style: none;
-    }
-
-    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline__trailing {
-      border-left-style: none;
-    }
-
     // Make hint text match the subtitle color (gray-400)
     .mat-mdc-form-field-hint {
       color: rgb(156 163 175) !important; // Tailwind gray-400
