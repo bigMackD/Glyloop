@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Glyloop.Infrastructure.Services.Dexcom.Models;
 
 /// <summary>
@@ -9,10 +11,10 @@ namespace Glyloop.Infrastructure.Services.Dexcom.Models;
 /// <param name="ExpiresIn">Token lifetime in seconds (typically 7200 = 2 hours)</param>
 /// <param name="TokenType">Token type (typically "Bearer")</param>
 public record OAuthTokenResponse(
-    string AccessToken,
-    string RefreshToken,
-    int ExpiresIn,
-    string TokenType);
+    [property: JsonPropertyName("access_token")] string AccessToken,
+    [property: JsonPropertyName("refresh_token")] string RefreshToken,
+    [property: JsonPropertyName("expires_in")] int ExpiresIn,
+    [property: JsonPropertyName("token_type")] string TokenType);
 
 /// <summary>
 /// Response from Dexcom glucose readings endpoint.
