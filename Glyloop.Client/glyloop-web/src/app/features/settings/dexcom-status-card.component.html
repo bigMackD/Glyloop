@@ -1,0 +1,74 @@
+<div class="bg-gray-900 rounded-lg p-6">
+  @if (status()) {
+    <div class="space-y-4">
+      <!-- Status badge -->
+      <div class="flex items-center gap-3">
+        @if (status()!.isLinked) {
+          @if (isExpired()) {
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium bg-red-900/30 text-red-300 border border-red-800">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span>
+              <span i18n="@@dexcom.status.expired">Expired</span>
+            </span>
+          } @else if (isExpiringSoon()) {
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium bg-yellow-900/30 text-yellow-300 border border-yellow-800">
+              <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+              <span i18n="@@dexcom.status.expiringSoon">Expiring Soon</span>
+            </span>
+          } @else {
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium bg-green-900/30 text-green-300 border border-green-800">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              <span i18n="@@dexcom.status.connected">Connected</span>
+            </span>
+          }
+        } @else {
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium bg-gray-700/50 text-gray-400 border border-gray-600">
+            <span class="w-2 h-2 rounded-full bg-gray-500"></span>
+            <span i18n="@@dexcom.status.notConnected">Not Connected</span>
+          </span>
+        }
+      </div>
+
+      <!-- Details -->
+      @if (status()!.isLinked) {
+        <dl class="space-y-3 border-t border-gray-800 pt-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-400" i18n="@@dexcom.linkedAt">Linked At</dt>
+            <dd class="mt-1 text-base text-white">{{ formatDate(status()!.linkedAt) }}</dd>
+          </div>
+
+          <div>
+            <dt class="text-sm font-medium text-gray-400" i18n="@@dexcom.tokenExpiresAt">Token Expires</dt>
+            <dd class="mt-1 text-base text-white">{{ formatDate(status()!.tokenExpiresAt) }}</dd>
+          </div>
+
+          <div>
+            <dt class="text-sm font-medium text-gray-400" i18n="@@dexcom.lastSyncAt">Last Sync</dt>
+            <dd class="mt-1 text-base text-white">
+              @if (status()!.lastSyncAt) {
+                {{ formatDate(status()!.lastSyncAt) }}
+              } @else {
+                <span class="text-gray-500" i18n="@@dexcom.noSyncYet">No sync yet</span>
+              }
+            </dd>
+          </div>
+        </dl>
+
+        @if (isExpiringSoon() || isExpired()) {
+          <div class="bg-yellow-900/20 border border-yellow-800 rounded-lg p-3 mt-4">
+            <p class="text-sm text-yellow-200" i18n="@@dexcom.renewalHint">
+              Your Dexcom connection will expire soon. You may need to reconnect to continue syncing data.
+            </p>
+          </div>
+        }
+      } @else {
+        <p class="text-sm text-gray-400" i18n="@@dexcom.notLinkedDescription">
+          Connect your Dexcom account to automatically sync your continuous glucose monitoring (CGM) data.
+        </p>
+      }
+    </div>
+  } @else {
+    <div class="flex items-center justify-center py-8">
+      <p class="text-gray-500" i18n="@@common.loading">Loading...</p>
+    </div>
+  }
+</div>

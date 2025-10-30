@@ -1,0 +1,36 @@
+<section class="space-y-6">
+  <div>
+    <h2 class="text-2xl font-bold text-white mb-2" i18n="@@settings.system.title">System Information</h2>
+    <p class="text-gray-400" i18n="@@settings.system.description">
+      View application and environment information.
+    </p>
+  </div>
+
+  <div class="space-y-4">
+    <div class="bg-gray-900 rounded-lg p-6">
+      <dl class="space-y-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-400" i18n="@@settings.system.appVersion">App Version</dt>
+          <dd class="mt-1 text-lg text-white font-mono">{{ systemInfo().appVersion }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-400" i18n="@@settings.system.environment">Environment</dt>
+          <dd class="mt-1 text-lg text-white font-mono">{{ systemInfo().environment }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="bg-gray-900 rounded-lg p-6">
+      <h3 class="font-semibold text-white mb-3" i18n="@@settings.system.apiHealth.title">API Health</h3>
+      <a
+        [href]="systemInfo().healthUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 underline"
+      >
+        <span i18n="@@settings.system.apiHealth.link">View Health Status</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
