@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 
 import { RegisterFormComponent } from './register-form.component';
+import { AppHeaderComponent } from '../../../core/shell/app-header.component';
 import { AuthApiService } from '../../../core/services/auth-api.service';
 import { RegisterFormModel } from '../../../core/models/auth.types';
 import { ProblemDetails } from '../../../core/models/common.types';
@@ -11,7 +12,7 @@ import { ProblemDetails } from '../../../core/models/common.types';
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [RegisterFormComponent],
+  imports: [RegisterFormComponent, AppHeaderComponent],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

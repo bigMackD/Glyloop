@@ -1,0 +1,64 @@
+<div class="user-menu">
+  <button
+    mat-icon-button
+    class="user-menu__trigger"
+    [matMenuTriggerFor]="userDropdown"
+    attr.aria-label="User menu"
+    i18n-attr.aria-label="@@app.shell.userMenu.label"
+  >
+    @if (user().avatarUrl) {
+      <img
+        class="user-menu__avatar"
+        [src]="user().avatarUrl"
+        [alt]="user().email"
+      />
+    } @else {
+      <div class="user-menu__avatar user-menu__avatar--icon">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+    }
+  </button>
+
+  <mat-menu #userDropdown="matMenu" class="user-menu__dropdown">
+    <!-- User info header -->
+    <div class="user-menu__header" mat-menu-item disabled>
+      <div class="user-menu__info">
+        <div class="user-menu__email">{{ user().email }}</div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Menu items -->
+    @for (item of items(); track item.id) {
+      @if (item.id === 'logout') {
+        <mat-divider></mat-divider>
+      }
+
+      <button
+        mat-menu-item
+        [class.user-menu__item--logout]="item.id === 'logout'"
+        (click)="onItemClick(item)"
+      >
+        @switch (item.id) {
+          @case ('account') {
+            <mat-icon>person</mat-icon>
+            <span i18n="@@app.shell.userMenu.account">Account</span>
+          }
+          @case ('data-sources') {
+            <mat-icon>cloud</mat-icon>
+            <span i18n="@@app.shell.userMenu.dataSources">Data Sources</span>
+          }
+          @case ('system-info') {
+            <mat-icon>info</mat-icon>
+            <span i18n="@@app.shell.userMenu.systemInfo">System Info</span>
+          }
+          @case ('logout') {
+            <mat-icon>logout</mat-icon>
+            <span i18n="@@app.shell.userMenu.logout">Logout</span>
+          }
+        }
+      </button>
+    }
+  </mat-menu>
+</div>

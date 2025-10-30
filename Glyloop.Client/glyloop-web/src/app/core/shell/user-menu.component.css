@@ -1,0 +1,77 @@
+.user-menu {
+  display: flex;
+  align-items: center;
+}
+
+.user-menu__trigger {
+  padding: 0;
+}
+
+.user-menu__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-menu__avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-menu__avatar--icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+}
+
+.user-menu__avatar--icon mat-icon {
+  color: white;
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.user-menu__header {
+  padding: 12px 16px;
+  cursor: default;
+}
+
+.user-menu__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-menu__email {
+  font-size: 0.875rem;
+  color: var(--text-primary, #ffffff);
+}
+
+.user-menu__item--logout {
+  color: var(--error, #ef4444);
+}
+
+.user-menu__item--logout mat-icon {
+  color: var(--error, #ef4444);
+}
+
+/* Override Material Menu styles for dark theme */
+::ng-deep .user-menu__dropdown {
+  background-color: var(--bg-secondary, #1a1a1a);
+  border: 1px solid var(--border-primary, #2a2a2a);
+}
+
+::ng-deep .user-menu__dropdown .mat-mdc-menu-item {
+  color: var(--text-primary, #ffffff);
+}
+
+::ng-deep .user-menu__dropdown .mat-mdc-menu-item:hover:not([disabled]) {
+  background-color: var(--bg-hover, #2a2a2a);
+}
+
+::ng-deep .user-menu__dropdown .mat-divider {
+  border-top-color: var(--border-primary, #2a2a2a);
+}
