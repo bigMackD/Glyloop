@@ -72,14 +72,19 @@ public class DexcomController : ControllerBase
     public IActionResult Callback([FromQuery] string code, [FromQuery] string state)
     {
         var frontendUrl = _configuration["CorsSettings:AllowedOrigins:0"] ?? "http://localhost:4200";
+        var callbackPath = _configuration["Dexcom:FrontendCallbackPath"] ?? "/settings/data-sources/dexcom/callback";
+
+        var normalizedFrontendUrl = frontendUrl.TrimEnd('/');
+        var normalizedCallbackPath = callbackPath.StartsWith('/') ? callbackPath : $"/{callbackPath}";
+        var callbackUrl = $"{normalizedFrontendUrl}{normalizedCallbackPath}";
 
         if (string.IsNullOrEmpty(code))
         {
-            return Redirect($"{frontendUrl}/dexcom-link?error=no_code");
+            return Redirect($"{callbackUrl}?error=no_code");
         }
 
         // Redirect to frontend with code, frontend will call /api/dexcom/link
-        return Redirect($"{frontendUrl}/dexcom-link?code={code}");
+        return Redirect($"{callbackUrl}?code={code}");
     }
 
     /// <summary>
