@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { SessionExpiredBannerComponent } from './session-expired-banner.component';
 import { LoginFormComponent } from './login-form.component';
 import { AuthFooterLinksComponent } from './auth-footer-links.component';
+import { AppHeaderComponent } from '../../../core/shell/app-header.component';
 import { AuthApiService } from '../../../core/services/auth-api.service';
 import { LoginFormModel } from '../../../core/models/auth.types';
 import { ProblemDetails } from '../../../core/models/common.types';
@@ -16,7 +17,8 @@ import { ProblemDetails } from '../../../core/models/common.types';
   imports: [
     SessionExpiredBannerComponent,
     LoginFormComponent,
-    AuthFooterLinksComponent
+    AuthFooterLinksComponent,
+    AppHeaderComponent
   ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',

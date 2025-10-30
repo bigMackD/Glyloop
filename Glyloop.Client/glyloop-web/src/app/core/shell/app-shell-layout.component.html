@@ -1,0 +1,26 @@
+<div class="app-shell">
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" class="skip-to-main" i18n="@@app.shell.skipToMain">Skip to main content</a>
+
+  @if (shellState.shellState(); as state) {
+    <app-header
+      [user]="state.user"
+      [navLinks]="state.navLinks"
+      [activePath]="state.activePath"
+      [menuItems]="shellState.userMenuItems()"
+      (navigate)="onNavigate($event)"
+      (menuAction)="onMenuAction($event)"
+    />
+    <main id="main-content" class="app-shell__content" tabindex="-1" attr.aria-label="Main content" i18n-attr.aria-label="@@app.shell.mainContent">
+      <router-outlet />
+    </main>
+  } @else if (shellState.loading()) {
+    <div class="app-shell__loading" role="status" attr.aria-live="polite">
+      <p i18n="@@app.shell.loading">Loading...</p>
+    </div>
+  } @else if (shellState.error()) {
+    <div class="app-shell__error" role="alert" attr.aria-live="assertive">
+      <p i18n="@@app.shell.error">{{ shellState.error() }}</p>
+    </div>
+  }
+</div>

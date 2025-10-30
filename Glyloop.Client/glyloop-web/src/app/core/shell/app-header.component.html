@@ -1,0 +1,26 @@
+<mat-toolbar class="app-header" role="banner">
+  <div class="app-header__container">
+    <!-- Logo/Brand -->
+    <div class="app-header__logo">
+      <span class="logo-text" i18n="@@app.shell.brand">Glyloop</span>
+    </div>
+
+    <!-- Navigation Tabs (only shown when authenticated) -->
+    @if (navLinks().length > 0) {
+      <nav-tabs
+        [links]="navLinks()"
+        [activePath]="activePath()"
+        (navigateClick)="navigate.emit($event)"
+      />
+    }
+
+    <!-- User Menu (only shown when user is present) -->
+    @if (user()) {
+      <user-menu
+        [user]="user()!"
+        [items]="menuItems()"
+        (itemSelect)="menuAction.emit($event)"
+      />
+    }
+  </div>
+</mat-toolbar>

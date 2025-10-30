@@ -1,0 +1,28 @@
+<nav class="nav-tabs" role="tablist" attr.aria-label="Main navigation" i18n-attr.aria-label="@@app.shell.nav.label">
+  @for (link of links(); track link.id) {
+    <a
+      class="nav-tab"
+      [class.nav-tab--active]="isActive(link)"
+      [class.nav-tab--attention]="link.requiresAttention"
+      [attr.href]="link.path"
+      [attr.role]="'tab'"
+      [attr.aria-selected]="isActive(link)"
+      [attr.aria-current]="isActive(link) ? 'page' : null"
+      [attr.id]="link.ariaId"
+      [attr.tabindex]="isActive(link) ? 0 : -1"
+      (click)="onTabClick(link, $event)"
+      (keydown)="onKeyDown(link, $event)"
+    >
+      <mat-icon class="nav-tab__icon">{{ link.icon }}</mat-icon>
+      <span class="nav-tab__label">{{ link.label }}</span>
+
+      @if (link.badgeCount && link.badgeCount > 0) {
+        <span class="nav-tab__badge" [matBadge]="link.badgeCount" matBadgeSize="small" matBadgeColor="warn"></span>
+      }
+
+      @if (link.requiresAttention && !link.badgeCount) {
+        <span class="nav-tab__attention-dot" attr.aria-label="Requires attention" i18n-attr.aria-label="@@app.shell.nav.attention"></span>
+      }
+    </a>
+  }
+</nav>
