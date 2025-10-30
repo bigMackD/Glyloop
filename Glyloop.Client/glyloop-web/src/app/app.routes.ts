@@ -9,6 +9,24 @@ export const routes: Routes = [
     data: { title: 'Dashboard' }
   },
   {
+    path: 'settings',
+    loadComponent: () => import('./features/settings/settings-page.component').then(m => m.SettingsPageComponent),
+    canActivate: [authGuard],
+    data: { title: 'Settings' }
+  },
+  {
+    path: 'settings/:section',
+    loadComponent: () => import('./features/settings/settings-page.component').then(m => m.SettingsPageComponent),
+    canActivate: [authGuard],
+    data: { title: 'Settings' }
+  },
+  {
+    path: 'dexcom-link',
+    loadComponent: () => import('./features/settings/dexcom-callback-page.component').then(m => m.DexcomCallbackPageComponent),
+    canActivate: [authGuard],
+    data: { title: 'Linking Dexcom...' }
+  },
+  {
     path: 'register',
     loadComponent: () => import('./features/auth/register/register-page.component').then(m => m.RegisterPageComponent),
     data: { title: 'Register' }

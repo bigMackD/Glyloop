@@ -1,0 +1,23 @@
+<nav class="bg-gray-900 rounded-lg p-2" role="navigation" aria-label="Settings navigation">
+  <ul class="space-y-1">
+    @for (item of navItems; track item.key) {
+      <li>
+        <button
+          type="button"
+          class="w-full text-left px-4 py-3 rounded-md transition-colors duration-150 flex items-center gap-3"
+          [class.bg-blue-600]="active() === item.key"
+          [class.text-white]="active() === item.key"
+          [class.text-gray-300]="active() !== item.key"
+          [class.hover:bg-gray-800]="active() !== item.key"
+          [attr.aria-current]="active() === item.key ? 'page' : null"
+          (click)="navigate.emit(item.key)"
+          (keydown.enter)="navigate.emit(item.key)"
+          (keydown.space)="$event.preventDefault(); navigate.emit(item.key)"
+        >
+          <span class="text-xl" role="img" [attr.aria-label]="item.label">{{ item.icon }}</span>
+          <span class="font-medium">{{ item.label }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+</nav>
