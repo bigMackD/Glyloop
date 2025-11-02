@@ -51,21 +51,15 @@ public class GetChartDataQueryHandler : IRequestHandler<GetChartDataQuery, Resul
         var endTime = _timeProvider.UtcNow;
         var startTime = endTime.AddHours(-hours);
 
-        var glucoseTask = _glucoseReadingService.GetReadingsInRangeAsync(
+        var glucoseResult = await _glucoseReadingService.GetReadingsInRangeAsync(
             userId, startTime, endTime, cancellationToken);
-        
-        var eventsTask = _eventRepository.GetByUserIdAsync(
-            userId, null, startTime, endTime, cancellationToken);
-
-        await Task.WhenAll(glucoseTask, eventsTask);
-
-        var glucoseResult = await glucoseTask;
         if (glucoseResult.IsFailure)
         {
             return Result.Failure<ChartDataDto>(glucoseResult.Error);
         }
 
-        var events = await eventsTask;
+        var events = await _eventRepository.GetByUserIdAsync(
+            userId, null, startTime, endTime, cancellationToken);
 
         var glucoseData = glucoseResult.Value
             .Select(r => new GlucoseDataPointDto(r.SystemTime, r.ValueMgDl, r.Trend))
