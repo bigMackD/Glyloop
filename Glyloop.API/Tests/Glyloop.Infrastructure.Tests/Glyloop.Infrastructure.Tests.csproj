@@ -10,15 +10,25 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoFixture" Version="4.18.1"/>
         <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
+        <PackageReference Include="NSubstitute" Version="5.1.0"/>
         <PackageReference Include="NUnit" Version="3.14.0"/>
         <PackageReference Include="NUnit.Analyzers" Version="3.9.0"/>
         <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
+        <PackageReference Include="Testcontainers.PostgreSql" Version="3.10.0"/>
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="NUnit.Framework"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Glyloop.Infrastructure\Glyloop.Infrastructure.csproj"/>
+        <ProjectReference Include="..\..\Glyloop.Domain\Glyloop.Domain.csproj"/>
+        <ProjectReference Include="..\..\Glyloop.Application\Glyloop.Application.csproj"/>
     </ItemGroup>
 
 </Project>
