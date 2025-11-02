@@ -1,0 +1,47 @@
+## Defaults
+- **Framework:** NUnit  
+- **Assertions:** NUnit `Assert`  
+- **Test doubles:** NSubstitute 
+- **Data builders:** AutoFixture / custom Builders  
+- **Optional approvals:** Verify (sparingly)  
+- **Target:** .NET 8
+
+## Project & Naming
+- Separate test project per app/project: `Glyloop.Domain.Tests`, `MyApGlyloopp.Application.Tests`, `Glyloop.API.Tests`.
+- Mirror SUT in file/class names: `UserServiceTests.cs`; method naming style: `Method_ShouldDoX_WhenY`.
+- One test class per SUT type; one behavior per test.
+
+## Structure & Style
+- Use **AAA (Arrange–Act–Assert)**
+- Tests must be deterministic (no I/O, external services, real time, or randomness).
+- One behavior per test (multiple related checks allowed).
+- Prefer **parameterized tests** using `[TestCase]` / `[TestCaseSource]`.
+
+## NUnit Basics
+- Lifecycle hooks: `[SetUp]` / `[TearDown]` for per-test init and cleanup.
+- NUnit attributes to use:
+  - `[TestFixture]`, `[Test]`
+  - `[TestCase(...)]`, `[TestCaseSource(...)]`
+  - `[Category("...")]`
+  - `[Parallelizable(ParallelScope.All)]`
+  - `[Timeout(ms)]`
+- For async code, return `Task` from tests.  
+- Avoid `Task.Delay`—inject fakes or abstractions for time.
+
+## Assertions (NUnit)
+- Core assertions:  
+  - `Assert.AreEqual(expected, actual)`  
+  - `Assert.That(actual, Is.EqualTo(expected))`  
+  - `Assert.Multiple(() => { ... })` for grouped related checks  
+  - Exceptions: `Assert.ThrowsAsync<ExceptionType>(async () => await sut.Do());`
+- Assert exact outcomes and edge cases (null, empty, min/max boundaries).
+- For collections, assert only ordering when relevant; otherwise use set/contains checks.
+
+## Mocks & Spies
+- Mock only external dependencies—never mock domain value objects.
+- NSubstitute examples:  
+  ```csharp
+  var repo = Substitute.For<IUserRepo>();
+  repo.Get(id).Returns(user);
+  await repo.Received(1).SaveAsync(user);
+  ```
