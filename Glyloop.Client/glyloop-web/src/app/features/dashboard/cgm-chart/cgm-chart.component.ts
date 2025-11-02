@@ -25,11 +25,23 @@ import {
   ScatterController
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import {
-  ChartDataResponseDto,
-  ChartRange,
-  OverlayEventMarkerDto
-} from '../../../core/models/dashboard.types';
+import { ChartDataResponseDto, ChartRange } from '../../../core/models/dashboard.types';
+
+type NormalizedGlucosePoint = {
+  iso: string;
+  epochMs: number;
+  value: number | null;
+};
+
+type NormalizedOverlayPoint = {
+  eventId?: string;
+  eventType?: string;
+  iso: string;
+  epochMs: number;
+  icon?: string | null;
+  color?: string | null;
+  summary?: string | null;
+};
 
 // Register Chart.js components
 Chart.register(
@@ -61,6 +73,8 @@ export class CgmChartComponent implements OnDestroy {
   readonly chartData = input.required<ChartDataResponseDto | null>();
   readonly highlightEventId = input<string | undefined>(undefined);
   readonly range = input.required<ChartRange>();
+  readonly upperBoundary = input<number>(180);
+  readonly lowerBoundary = input<number>(70);
 
   // Outputs
   readonly eventSelect = output<string>();
@@ -106,7 +120,6 @@ export class CgmChartComponent implements OnDestroy {
   private updateChart(data: ChartDataResponseDto): void {
     const canvas = this.canvasRef()?.nativeElement;
     if (!canvas) return;
-
     if (!this.chart) {
       this.createChart(canvas, data);
     } else {
@@ -127,7 +140,7 @@ export class CgmChartComponent implements OnDestroy {
       data: chartData,
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         interaction: {
           mode: 'index',
           intersect: false
@@ -199,21 +212,31 @@ export class CgmChartComponent implements OnDestroy {
    * Prepares Chart.js data structure from API response
    */
   private prepareChartData(data: ChartDataResponseDto): ChartData {
+    const glucosePoints = this.buildGlucosePoints(data).sort((a, b) => a.epochMs - b.epochMs);
+    const overlayPoints = this.buildOverlayPoints(data).sort((a, b) => a.epochMs - b.epochMs);
+
     // Glucose line dataset
-    const glucoseData = data.glucose.map((point) => ({
-      x: new Date(point.timestampUtc).getTime(),
-      y: point.mgdl
+    const glucoseData = glucosePoints.map((point) => ({
+      x: point.epochMs,
+      y: point.value
     }));
 
     // Event overlay scatter dataset
-    const overlayData = data.overlays.map((overlay) => ({
-      x: new Date(overlay.timestampUtc).getTime(),
-      y: this.getGlucoseAtTime(data, overlay.timestampUtc) || 200, // Default to mid-range if no glucose
-      eventId: overlay.eventId,
-      type: overlay.type,
-      icon: overlay.icon,
-      color: overlay.color
-    }));
+    const overlayData = overlayPoints.map((overlay) => {
+      const yValue = this.getGlucoseValueAt(overlay.epochMs, glucosePoints) ?? 200;
+
+      return {
+        x: overlay.epochMs,
+        y: yValue,
+        eventId: overlay.eventId,
+        type: overlay.eventType,
+        eventType: overlay.eventType,
+        icon: overlay.icon,
+        color: overlay.color
+      };
+    });
+
+    const thresholdDatasets = this.buildThresholdDatasets(glucosePoints, data);
 
     return {
       datasets: [
@@ -234,11 +257,12 @@ export class CgmChartComponent implements OnDestroy {
           type: 'scatter',
           label: 'Events',
           data: overlayData,
-          backgroundColor: overlayData.map((d: any) => d.color || '#ff6384'),
+          backgroundColor: overlayData.map((d: any) => d.color ?? '#ff6384'),
           pointRadius: 8,
           pointHoverRadius: 10,
           pointStyle: 'circle'
-        } as any
+        } as any,
+        ...thresholdDatasets
       ]
     };
   }
@@ -246,22 +270,130 @@ export class CgmChartComponent implements OnDestroy {
   /**
    * Gets glucose value at a specific time (or nearest)
    */
-  private getGlucoseAtTime(data: ChartDataResponseDto, timestampUtc: string): number | null {
-    const targetTime = new Date(timestampUtc).getTime();
-    let closest: { time: number; value: number | null } | null = null;
+  private getGlucoseValueAt(
+    targetEpochMs: number,
+    points: NormalizedGlucosePoint[]
+  ): number | null {
+    let closest: NormalizedGlucosePoint | null = null;
     let minDiff = Infinity;
 
-    for (const point of data.glucose) {
-      const pointTime = new Date(point.timestampUtc).getTime();
-      const diff = Math.abs(pointTime - targetTime);
+    for (const point of points) {
+      const diff = Math.abs(point.epochMs - targetEpochMs);
 
-      if (diff < minDiff && point.mgdl !== null) {
+      if (diff < minDiff && point.value !== null && point.value !== undefined) {
         minDiff = diff;
-        closest = { time: pointTime, value: point.mgdl };
+        closest = point;
       }
     }
 
-    return closest?.value || null;
+    return closest?.value ?? null;
+  }
+
+  /**
+   * Extracts glucose points from raw API response (supports legacy and new shapes)
+   */
+  private buildGlucosePoints(data: ChartDataResponseDto): NormalizedGlucosePoint[] {
+    return (data.glucoseData ?? [])
+      .map((point) => ({
+        iso: point.timestamp,
+        epochMs: Date.parse(point.timestamp),
+        value: point.value ?? null
+      }))
+      .filter((point) => Number.isFinite(point.epochMs));
+  }
+
+  /**
+   * Normalizes overlay markers with millisecond timestamps
+   */
+  private buildOverlayPoints(data: ChartDataResponseDto): NormalizedOverlayPoint[] {
+    return (data.eventOverlays ?? [])
+      .map((overlay) => ({
+        eventId: overlay.eventId,
+        eventType: overlay.eventType?.toString(),
+        iso: overlay.timestamp,
+        epochMs: Date.parse(overlay.timestamp),
+        icon: overlay.icon ?? null,
+        color: overlay.color ?? null,
+        summary: overlay.summary ?? null
+      }))
+      .filter((overlay) => Number.isFinite(overlay.epochMs));
+  }
+
+  private buildThresholdDatasets(
+    glucosePoints: NormalizedGlucosePoint[],
+    data: ChartDataResponseDto
+  ): ChartData['datasets'] {
+    const upper = this.upperBoundary();
+    const lower = this.lowerBoundary();
+
+    const startEpoch = this.resolveStartEpoch(glucosePoints, data);
+    const endEpoch = this.resolveEndEpoch(glucosePoints, data);
+
+    if (startEpoch === null || endEpoch === null || startEpoch === endEpoch) {
+      return [];
+    }
+
+    const minEpoch = Math.min(startEpoch, endEpoch);
+    const maxEpoch = Math.max(startEpoch, endEpoch);
+
+    const datasets: ChartData['datasets'] = [];
+
+    if (Number.isFinite(upper)) {
+      datasets.push(this.createThresholdDataset(minEpoch, maxEpoch, upper, 'Upper Range'));
+    }
+
+    if (Number.isFinite(lower)) {
+      datasets.push(this.createThresholdDataset(minEpoch, maxEpoch, lower, 'Lower Range'));
+    }
+
+    return datasets;
+  }
+
+  private resolveStartEpoch(
+    glucosePoints: NormalizedGlucosePoint[],
+    data: ChartDataResponseDto
+  ): number | null {
+    const parsedStart = Date.parse(data.startTime);
+    if (Number.isFinite(parsedStart)) {
+      return parsedStart;
+    }
+
+    return glucosePoints[0]?.epochMs ?? null;
+  }
+
+  private resolveEndEpoch(
+    glucosePoints: NormalizedGlucosePoint[],
+    data: ChartDataResponseDto
+  ): number | null {
+    const parsedEnd = Date.parse(data.endTime);
+    if (Number.isFinite(parsedEnd)) {
+      return parsedEnd;
+    }
+
+    return glucosePoints.at(-1)?.epochMs ?? null;
+  }
+
+  private createThresholdDataset(
+    minEpoch: number,
+    maxEpoch: number,
+    value: number,
+    label: string
+  ): ChartData['datasets'][number] {
+    return {
+      type: 'line',
+      label,
+      data: [
+        { x: minEpoch, y: value },
+        { x: maxEpoch, y: value }
+      ],
+      borderColor: 'rgba(220, 53, 69, 0.85)',
+      borderWidth: 1,
+      borderDash: [6, 6],
+      pointRadius: 0,
+      pointHoverRadius: 0,
+      fill: false,
+      tension: 0
+    } as any;
   }
 
   /**
@@ -455,6 +587,10 @@ export class CgmChartComponent implements OnDestroy {
    */
   hasData(): boolean {
     const data = this.chartData();
-    return (data?.glucose?.length ?? 0) > 0;
+    if (!data) {
+      return false;
+    }
+
+    return data.glucoseData.length > 0;
   }
 }

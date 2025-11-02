@@ -18,22 +18,25 @@ export interface PagedResponseDto<T> {
 
 // Chart
 export interface GlucosePointDto {
-  timestampUtc: string; // ISO 8601 UTC
-  mgdl: number | null; // null to create a gap/break
+  timestamp: string; // ISO 8601
+  value: number | null; // null to create a gap/break
+  trend?: string | null;
 }
 
 export interface OverlayEventMarkerDto {
   eventId: string;
-  type: EventType;
-  timestampUtc: string;
-  icon: string; // name or URL (frontend maps types to icons/colors)
-  color: string; // hex
+  eventType: EventType | string;
+  timestamp: string;
+  icon?: string | null; // name or URL (frontend maps types to icons/colors)
+  color?: string | null; // hex
+  summary?: string | null;
 }
 
 export interface ChartDataResponseDto {
-  glucose: GlucosePointDto[];
-  overlays: OverlayEventMarkerDto[];
-  rangeSeconds: number; // echoed by server or computed client
+  glucoseData: GlucosePointDto[];
+  eventOverlays: OverlayEventMarkerDto[];
+  startTime: string;
+  endTime: string;
 }
 
 export interface TimeInRangeResponseDto {
@@ -42,8 +45,8 @@ export interface TimeInRangeResponseDto {
   readingsInRange: number;
   readingsBelowRange: number;
   readingsAboveRange: number;
-  targetLowMgdl: number; // e.g., 70
-  targetHighMgdl: number; // e.g., 180
+  targetLowerBound: number; // e.g., 70
+  targetUpperBound: number; // e.g., 180
 }
 
 // Events (list and details)
