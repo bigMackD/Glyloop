@@ -39,7 +39,15 @@ export class TirSummaryComponent {
   readonly targetRangeText = computed(() => {
     const data = this.tir();
     if (!data) return '';
-    return `${data.targetLowMgdl}-${data.targetHighMgdl} mg/dL`;
+
+    const lower = data.targetLowerBound;
+    const upper = data.targetUpperBound;
+
+    if (typeof lower !== 'number' || typeof upper !== 'number') {
+      return '';
+    }
+
+    return `${lower}-${upper} mg/dL`;
   });
 
   // Localized strings

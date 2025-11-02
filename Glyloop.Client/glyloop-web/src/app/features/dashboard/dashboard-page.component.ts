@@ -120,8 +120,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
       .subscribe();
 
     // Restart polling with new range
-    this.chartDataService.stop();
-    this.chartDataService.start(range);
+    this.chartDataService.start(range, { skipInitialFetch: true });
   }
 
   /**
@@ -187,11 +186,11 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     // Find the event in chart data to get its timestamp
     const data = this.chartData();
     if (data) {
-      const eventMarker = data.overlays.find((overlay) => overlay.eventId === eventId);
+      const eventMarker = data.eventOverlays.find((overlay) => overlay.eventId === eventId);
       if (eventMarker) {
         // TODO: Implement chart recentering logic
         // For MVP, we just highlight the event marker
-        console.log('Selected event at:', eventMarker.timestampUtc);
+        console.log('Selected event at:', eventMarker.timestamp);
       }
     }
   }

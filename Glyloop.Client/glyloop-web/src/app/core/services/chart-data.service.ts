@@ -148,7 +148,7 @@ export class ChartDataService {
    * Starts polling for chart data and TIR at the specified range.
    * Automatically pauses when page is hidden and resumes when visible.
    */
-  start(range: ChartRange): void {
+  start(range: ChartRange, options?: { skipInitialFetch?: boolean }): void {
     if (this.isPolling && this.currentRange === range) {
       return; // Already polling this range
     }
@@ -158,7 +158,9 @@ export class ChartDataService {
     this.currentRange = range;
 
     // Initial fetch
-    this.fetchBoth(range).subscribe();
+    if (!options?.skipInitialFetch) {
+      this.fetchBoth(range).subscribe();
+    }
 
     // Set up polling with exponential backoff
     timer(this.POLL_INTERVAL_MS, this.POLL_INTERVAL_MS)
