@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SampleComponent Snapshot should match snapshot 1`] = `
+SampleComponent {
+  "count": 0,
+  "loading": false,
+  "title": "Sample Component",
+}
+`;

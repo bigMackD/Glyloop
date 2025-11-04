@@ -12,6 +12,7 @@
 - [Tech stack](#tech-stack)
 - [Getting started locally](#getting-started-locally)
 - [Available scripts](#available-scripts)
+- [Testing](#testing)
 - [Project scope](#project-scope)
 - [Project status](#project-status)
 - [License](#license)
@@ -90,6 +91,30 @@ In `Glyloop.Client/glyloop-web/package.json`:
 - `test`: Run unit tests (Karma/Jasmine).
 - `lint`: Lint the project (ESLint).
 - `lint:fix`: Lint and auto-fix.
+
+## Testing
+
+Glyloop employs a comprehensive testing strategy across multiple layers:
+
+### Backend Testing
+- **Unit Tests**: nUnit with NSubstitute for mocking and NUnit assertions for readable assertions
+- **Integration Tests**: TestContainers for containerized database tests, EF Core In-Memory for domain logic
+- **API Testing**: Direct HttpClient calls and Insomnia Collection for API validation
+
+### Frontend Testing
+- **Unit Tests**: Jest for component and service testing, with @angular/core/testing utilities
+- **Type Safety**: TypeScript ensures compile-time type checking
+
+### End-to-End Testing
+- **E2E Automation**: Playwright for browser automation
+- **Manual Testing**: Insomnia Collection for API validation
+
+### Code Quality
+- **Analysis**: SonarQube for coverage and quality metrics
+- **Linting**: ESLint (frontend), StyleCop (backend)
+- **Security**: npm audit (frontend), dotnet analyzer (backend), OWASP ZAP (vulnerability scanning)
+
+For detailed test scenarios, acceptance criteria, and test data specifications, see [TEST_PLAN.md](./TEST_PLAN.md).
 
 ## Project scope
 
