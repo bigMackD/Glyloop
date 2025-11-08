@@ -11,7 +11,7 @@ import { ShellUserSummary, UserMenuItem } from '../models/shell.types';
  * Provides access to account settings, data sources, system info, and logout.
  */
 @Component({
-  selector: 'user-menu',
+  selector: 'app-user-menu',
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule],
   changeDetection: ChangeDetectionStrategy.OnPush,

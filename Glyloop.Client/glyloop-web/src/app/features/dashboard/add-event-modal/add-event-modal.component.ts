@@ -43,7 +43,7 @@ export class AddEventModalComponent {
   readonly open = input.required<boolean>();
 
   // Outputs
-  readonly close = output<void>();
+  readonly closeModal = output<void>();
   readonly created = output<EventResponseDto>();
 
   // State
@@ -358,7 +358,7 @@ export class AddEventModalComponent {
   /**
    * Handles errors from API
    */
-  private handleError(err: any): void {
+  private handleError(err: { status?: number; error?: { detail?: string } }): void {
     if (err.status === 400) {
       this.error.set(
         err.error?.detail ||
@@ -377,7 +377,7 @@ export class AddEventModalComponent {
   onClose(): void {
     this.resetAllForms();
     this.error.set(undefined);
-    this.close.emit();
+    this.closeModal.emit();
   }
 
   /**

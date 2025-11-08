@@ -16,14 +16,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 })
 export class UnlinkDialogComponent {
   readonly open = input.required<boolean>();
-  readonly confirm = output<void>();
-  readonly cancel = output<void>();
+  readonly confirmAction = output<void>();
+  readonly cancelAction = output<void>();
 
   onConfirm(): void {
-    this.confirm.emit();
+    this.confirmAction.emit();
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.cancelAction.emit();
   }
 }

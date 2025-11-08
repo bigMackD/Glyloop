@@ -131,6 +131,7 @@ export class RegisterFormComponent {
         passwordsMismatch: true
       });
     } else if (this.confirmPasswordControl.hasError('passwordsMismatch')) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { passwordsMismatch, ...rest } = this.confirmPasswordControl.errors ?? {};
       this.confirmPasswordControl.setErrors(Object.keys(rest).length ? rest : null);
     }

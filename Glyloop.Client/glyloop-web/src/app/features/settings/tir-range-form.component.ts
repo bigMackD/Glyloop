@@ -20,7 +20,7 @@ import { AccountPreferencesVM, UpdatePreferencesRequestDto, ValidationErrors } f
 export class TirRangeFormComponent implements OnInit {
   readonly value = input.required<AccountPreferencesVM>();
   readonly save = output<UpdatePreferencesRequestDto>();
-  readonly cancel = output<void>();
+  readonly cancelAction = output<void>();
 
   readonly localLower = signal<number>(70);
   readonly localUpper = signal<number>(180);
@@ -88,6 +88,6 @@ export class TirRangeFormComponent implements OnInit {
     this.localLower.set(v.initialLower);
     this.localUpper.set(v.initialUpper);
     this.errors.set({});
-    this.cancel.emit();
+    this.cancelAction.emit();
   }
 }

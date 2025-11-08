@@ -27,13 +27,13 @@ import {
 import 'chartjs-adapter-date-fns';
 import { ChartDataResponseDto, ChartRange } from '../../../core/models/dashboard.types';
 
-type NormalizedGlucosePoint = {
+interface NormalizedGlucosePoint {
   iso: string;
   epochMs: number;
   value: number | null;
-};
+}
 
-type NormalizedOverlayPoint = {
+interface NormalizedOverlayPoint {
   eventId?: string;
   eventType?: string;
   iso: string;
@@ -41,7 +41,7 @@ type NormalizedOverlayPoint = {
   icon?: string | null;
   color?: string | null;
   summary?: string | null;
-};
+}
 
 // Register Chart.js components
 Chart.register(
@@ -257,11 +257,11 @@ export class CgmChartComponent implements OnDestroy {
           type: 'scatter',
           label: 'Events',
           data: overlayData,
-          backgroundColor: overlayData.map((d: any) => d.color ?? '#ff6384'),
+          backgroundColor: overlayData.map((d: NormalizedOverlayPoint) => d.color ?? '#ff6384'),
           pointRadius: 8,
           pointHoverRadius: 10,
           pointStyle: 'circle'
-        } as any,
+        } as never,
         ...thresholdDatasets
       ]
     };
@@ -393,7 +393,7 @@ export class CgmChartComponent implements OnDestroy {
       pointHoverRadius: 0,
       fill: false,
       tension: 0
-    } as any;
+    } as never;
   }
 
   /**
@@ -413,11 +413,11 @@ export class CgmChartComponent implements OnDestroy {
   private updateHighlight(eventId: string | undefined): void {
     if (!this.chart) return;
 
-    const overlayDataset = this.chart.data.datasets[1] as any;
+    const overlayDataset = this.chart.data.datasets[1] as { data: NormalizedOverlayPoint[]; pointRadius?: number[] };
     if (!overlayDataset) return;
 
     // Reset all point radii
-    const radii = overlayDataset.data.map((point: any) =>
+    const radii = overlayDataset.data.map((point: NormalizedOverlayPoint) =>
       point.eventId === eventId ? 12 : 8
     );
     overlayDataset.pointRadius = radii;
@@ -428,7 +428,7 @@ export class CgmChartComponent implements OnDestroy {
   /**
    * Handles chart click events (for overlay markers)
    */
-  private handleChartClick(event: any, elements: any[]): void {
+  private handleChartClick(event: unknown, elements: { datasetIndex: number; index: number }[]): void {
     if (elements.length === 0) return;
 
     const element = elements[0];
@@ -437,7 +437,7 @@ export class CgmChartComponent implements OnDestroy {
     // Check if clicked on overlay (events) dataset
     if (datasetIndex === 1) {
       const dataIndex = element.index;
-      const point = this.chart?.data.datasets[1].data[dataIndex] as any;
+      const point = this.chart?.data.datasets[1].data[dataIndex] as NormalizedOverlayPoint;
 
       if (point?.eventId) {
         this.eventSelect.emit(point.eventId);
@@ -448,11 +448,11 @@ export class CgmChartComponent implements OnDestroy {
   /**
    * Handles chart hover for crosshair
    */
-  private handleChartHover(event: any): void {
+  private handleChartHover(event: { native?: { target: HTMLCanvasElement; clientX: number; clientY: number } }): void {
     if (!this.chart || !event.native) return;
 
     // Get relative position manually
-    const rect = (event.native.target as HTMLCanvasElement).getBoundingClientRect();
+    const rect = event.native.target.getBoundingClientRect();
     const x = event.native.clientX - rect.left;
     const y = event.native.clientY - rect.top;
     this.crosshairPosition = { x, y };
@@ -461,7 +461,7 @@ export class CgmChartComponent implements OnDestroy {
     const nearestIndex = this.findNearestDataPoint(x);
     if (nearestIndex >= 0) {
       this.currentCrosshairIndex.set(nearestIndex);
-      const data = this.chart.data.datasets[0].data[nearestIndex] as any;
+      const data = this.chart.data.datasets[0].data[nearestIndex] as { x?: number };
       if (data?.x) {
         const timestamp = new Date(data.x).toISOString();
         this.crosshairMove.emit(timestamp);
@@ -481,7 +481,7 @@ export class CgmChartComponent implements OnDestroy {
     let nearestIndex = -1;
     let minDistance = Infinity;
 
-    dataset.data.forEach((point: any, index) => {
+    dataset.data.forEach((point: unknown, index) => {
       const meta = this.chart!.getDatasetMeta(0);
       const element = meta.data[index];
 
@@ -536,7 +536,7 @@ export class CgmChartComponent implements OnDestroy {
 
       if (newIndex !== currentIndex && newIndex >= 0 && newIndex < dataLength) {
         this.currentCrosshairIndex.set(newIndex);
-        const data = this.chart.data.datasets[0].data[newIndex] as any;
+        const data = this.chart.data.datasets[0].data[newIndex] as { x?: number };
         if (data?.x) {
           const timestamp = new Date(data.x).toISOString();
           this.crosshairMove.emit(timestamp);
@@ -554,15 +554,15 @@ export class CgmChartComponent implements OnDestroy {
     const currentIndex = this.currentCrosshairIndex();
     if (currentIndex < 0) return;
 
-    const glucosePoint = this.chart.data.datasets[0].data[currentIndex] as any;
+    const glucosePoint = this.chart.data.datasets[0].data[currentIndex] as { x?: number };
     if (!glucosePoint?.x) return;
 
     const currentTime = glucosePoint.x;
     const overlayDataset = this.chart.data.datasets[1];
 
     // Find event marker at or near current time
-    for (const point of overlayDataset.data as any[]) {
-      if (Math.abs(point.x - currentTime) < 60000) {
+    for (const point of overlayDataset.data as NormalizedOverlayPoint[]) {
+      if (Math.abs(point.epochMs - currentTime) < 60000) {
         // Within 1 minute
         if (point.eventId) {
           this.eventSelect.emit(point.eventId);

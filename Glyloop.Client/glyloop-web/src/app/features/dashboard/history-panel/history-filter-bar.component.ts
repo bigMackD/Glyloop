@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,7 +40,7 @@ export class HistoryFilterBarComponent {
 
   // Outputs
   readonly filtersChange = output<HistoryFilters>();
-  readonly reset = output<void>();
+  readonly resetFilters = output<void>();
 
   // Available event types
   readonly eventTypes: EventType[] = ['Food', 'Insulin', 'Exercise', 'Note'];
@@ -126,7 +126,7 @@ export class HistoryFilterBarComponent {
       eventType: null
     });
 
-    this.reset.emit();
+    this.resetFilters.emit();
   }
 
   /**

@@ -3,10 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   TirPreferencesDto,
-  UpdatePreferencesRequestDto,
-  DexcomStatusDto,
-  LinkDexcomRequestDto,
-  LinkDexcomResponseDto
+  UpdatePreferencesRequestDto
 } from '../models/settings.types';
 import { API_CONFIG } from '../config/api.config';
 

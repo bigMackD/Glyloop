@@ -6,8 +6,7 @@ import { EventDetailsDrawerComponent } from './event-details-drawer.component';
 import {
   HistoryFilters,
   EventListItemDto,
-  EventResponseDto,
-  PagedResponseDto
+  EventResponseDto
 } from '../../../core/models/dashboard.types';
 import { EventsService } from '../../../core/services/events.service';
 import { catchError, of } from 'rxjs';
@@ -37,7 +36,7 @@ export class HistoryPanelComponent {
   readonly selectedEventId = input<string | undefined>(undefined);
 
   // Outputs
-  readonly select = output<string>();
+  readonly selectEvent = output<string>();
   readonly filtersChange = output<HistoryFilters>();
 
   // State
@@ -85,7 +84,7 @@ export class HistoryPanelComponent {
     this.eventsService
       .list(filters)
       .pipe(
-        catchError((err) => {
+        catchError(() => {
           this.error.set(this.errorMessage);
           return of(null);
         })
@@ -143,14 +142,14 @@ export class HistoryPanelComponent {
    * Handles row selection
    */
   onRowSelect(eventId: string): void {
-    this.select.emit(eventId);
+    this.selectEvent.emit(eventId);
   }
 
   /**
    * Handles details drawer close
    */
   onDetailsClose(): void {
-    this.select.emit(undefined!);
+    this.selectEvent.emit(undefined!);
   }
 
   /**

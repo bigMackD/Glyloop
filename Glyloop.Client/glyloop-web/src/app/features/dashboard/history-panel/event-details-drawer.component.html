@@ -34,14 +34,14 @@
           <!-- Common Fields -->
           <div class="detail-field grid gap-2 md:grid-cols-2">
             <div>
-              <label class="detail-label">{{ typeLabel }}</label>
+              <span class="detail-label">{{ typeLabel }}</span>
               <div class="detail-value">
                 <mat-chip>{{ eventData.eventType }}</mat-chip>
               </div>
             </div>
 
             <div>
-              <label class="detail-label">{{ timestampLabel }}</label>
+              <span class="detail-label">{{ timestampLabel }}</span>
               <div class="detail-value">{{ formatTimestamp(eventData.eventTime) }}</div>
             </div>
           </div>
@@ -53,13 +53,13 @@
             <div class="detail-section space-y-4">
               <div class="detail-field grid gap-4 md:grid-cols-2">
                 <div>
-                  <label class="detail-label">{{ carbsLabel }}</label>
+                  <span class="detail-label">{{ carbsLabel }}</span>
                   <div class="detail-value">{{ eventData.carbohydratesGrams }}g</div>
                 </div>
 
                 @if (getMealTagLabel(eventData.mealTagId)) {
                   <div>
-                    <label class="detail-label">{{ mealTagLabel }}</label>
+                    <span class="detail-label">{{ mealTagLabel }}</span>
                     <div class="detail-value">{{ getMealTagLabel(eventData.mealTagId) }}</div>
                   </div>
                 }
@@ -67,14 +67,14 @@
 
               @if (eventData.absorptionHint) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ absorptionHintLabel }}</label>
+                  <span class="detail-label">{{ absorptionHintLabel }}</span>
                   <div class="detail-value">{{ eventData.absorptionHint }}</div>
                 </div>
               }
 
               @if (eventData.note) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ noteLabel }}</label>
+                  <span class="detail-label">{{ noteLabel }}</span>
                   <div class="detail-value">{{ eventData.note }}</div>
                 </div>
               }
@@ -84,7 +84,7 @@
               <!-- Outcome Section -->
               <div class="outcome-section">
                 <div class="flex flex-wrap items-center gap-2 mb-3">
-                  <label class="detail-label">{{ outcomeLabel }}</label>
+                  <span class="detail-label">{{ outcomeLabel }}</span>
                   <mat-icon
                     class="text-sm"
                     [matTooltip]="outcomeTooltip"
@@ -114,7 +114,7 @@
                     </span>
                   </div>
                 } @else if (outcome(); as outcomeData) {
-                  @if (outcomeData.glucoseValue != null) {
+                  @if (outcomeData.glucoseValue !== null) {
                     <div class="outcome-value">
                       <span class="text-3xl font-bold text-primary">
                         {{ outcomeData.glucoseValue }} mg/dL
@@ -140,40 +140,40 @@
             <div class="detail-section space-y-4">
               <div class="detail-field grid gap-4 md:grid-cols-2">
                 <div>
-                  <label class="detail-label">{{ insulinTypeLabel }}</label>
+                  <span class="detail-label">{{ insulinTypeLabel }}</span>
                   <div class="detail-value">{{ eventData.insulinType }}</div>
                 </div>
 
                 <div>
-                  <label class="detail-label">{{ insulinUnitsLabel }}</label>
+                  <span class="detail-label">{{ insulinUnitsLabel }}</span>
                   <div class="detail-value">{{ eventData.insulinUnits }}U</div>
                 </div>
               </div>
 
               @if (eventData.preparation) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ preparationLabel }}</label>
+                  <span class="detail-label">{{ preparationLabel }}</span>
                   <div class="detail-value">{{ eventData.preparation }}</div>
                 </div>
               }
 
               @if (eventData.delivery) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ deliveryLabel }}</label>
+                  <span class="detail-label">{{ deliveryLabel }}</span>
                   <div class="detail-value">{{ eventData.delivery }}</div>
                 </div>
               }
 
               @if (eventData.timing) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ timingLabel }}</label>
+                  <span class="detail-label">{{ timingLabel }}</span>
                   <div class="detail-value">{{ eventData.timing }}</div>
                 </div>
               }
 
               @if (eventData.note) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ noteLabel }}</label>
+                  <span class="detail-label">{{ noteLabel }}</span>
                   <div class="detail-value">{{ eventData.note }}</div>
                 </div>
               }
@@ -185,26 +185,26 @@
             <div class="detail-section space-y-4">
               <div class="detail-field grid gap-4 md:grid-cols-2">
                 <div>
-                  <label class="detail-label">{{ exerciseTypeLabel }}</label>
+                  <span class="detail-label">{{ exerciseTypeLabel }}</span>
                   <div class="detail-value">{{ getExerciseTypeLabel(eventData.exerciseTypeId) || eventData.exerciseTypeId }}</div>
                 </div>
 
                 <div>
-                  <label class="detail-label">{{ durationLabel }}</label>
+                  <span class="detail-label">{{ durationLabel }}</span>
                   <div class="detail-value">{{ eventData.durationMinutes }} minutes</div>
                 </div>
               </div>
 
               @if (eventData.intensity) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ intensityLabel }}</label>
+                  <span class="detail-label">{{ intensityLabel }}</span>
                   <div class="detail-value">{{ eventData.intensity }}</div>
                 </div>
               }
 
               @if (eventData.note) {
                 <div class="detail-field">
-                  <label class="detail-label">{{ noteLabel }}</label>
+                  <span class="detail-label">{{ noteLabel }}</span>
                   <div class="detail-value">{{ eventData.note }}</div>
                 </div>
               }
@@ -214,7 +214,7 @@
           <!-- Note Event Fields -->
           @if (eventData.eventType === 'Note') {
             <div class="detail-field">
-              <label class="detail-label">{{ noteLabel }}</label>
+              <span class="detail-label">{{ noteLabel }}</span>
               <div class="detail-value whitespace-pre-wrap">{{ eventData.note ?? eventData.noteText }}</div>
             </div>
           }

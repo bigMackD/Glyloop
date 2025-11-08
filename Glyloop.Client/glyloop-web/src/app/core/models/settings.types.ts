@@ -40,11 +40,11 @@ export interface AccountPreferencesVM {
   saving: boolean;
 }
 
-export type ValidationErrors = {
+export interface ValidationErrors {
   lower?: string;
   upper?: string;
   cross?: string;
-};
+}
 
 export interface DexcomLinkVM {
   status: DexcomStatusDto | null;
