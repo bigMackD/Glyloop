@@ -1,16 +1,16 @@
-<div class="add-event-modal-overlay" [class.open]="open()" (click)="onClose()">
+<div class="add-event-modal-overlay" [class.open]="open()" (click)="onClose()" data-testid="add-event-dialog">
   <div class="modal-content" (click)="$event.stopPropagation()" role="dialog" [attr.aria-modal]="true" [attr.aria-labelledby]="'modal-title'">
     <!-- Header -->
     <div class="modal-header">
-      <h2 id="modal-title" class="text-xl font-semibold">{{ title }}</h2>
-      <button mat-icon-button (click)="onClose()" [attr.aria-label]="cancelLabel">
+      <h2 id="modal-title" class="text-xl font-semibold" data-testid="add-event-title">{{ title }}</h2>
+      <button mat-icon-button (click)="onClose()" [attr.aria-label]="cancelLabel" data-testid="add-event-close-button">
         <mat-icon>close</mat-icon>
       </button>
     </div>
 
     <!-- Error Banner -->
     @if (error()) {
-      <div class="error-banner">
+      <div class="error-banner" data-testid="add-event-error-message">
         <mat-icon>error</mat-icon>
         <span>{{ error() }}</span>
       </div>
@@ -21,10 +21,11 @@
       [selectedIndex]="activeTabIndex()"
       (selectedIndexChange)="onTabChange($event)"
       class="event-tabs"
+      data-testid="event-tabs"
     >
       <!-- Food Tab -->
-      <mat-tab [label]="foodTab">
-        <form [formGroup]="foodForm" class="event-form">
+      <mat-tab [label]="foodTab" data-testid="food-tab">
+        <form [formGroup]="foodForm" class="event-form" data-testid="food-form">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ carbsLabel }}</mat-label>
             <input
@@ -32,6 +33,7 @@
               type="number"
               formControlName="carbohydratesGrams"
               [attr.aria-label]="carbsLabel"
+              data-testid="food-carbs-input"
               min="0"
               max="300"
               step="1"
@@ -81,11 +83,11 @@
       </mat-tab>
 
       <!-- Insulin Tab -->
-      <mat-tab [label]="insulinTab">
-        <form [formGroup]="insulinForm" class="event-form">
+      <mat-tab [label]="insulinTab" data-testid="insulin-tab">
+        <form [formGroup]="insulinForm" class="event-form" data-testid="insulin-form">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ insulinTypeLabel }}</mat-label>
-            <mat-select formControlName="insulinType">
+            <mat-select formControlName="insulinType" data-testid="insulin-type-select">
               @for (type of insulinTypes; track type) {
                 <mat-option [value]="type">{{ type }}</mat-option>
               }
@@ -102,6 +104,7 @@
               type="number"
               formControlName="insulinUnits"
               [attr.aria-label]="insulinUnitsLabel"
+              data-testid="insulin-units-input"
               min="0"
               max="100"
               step="0.5"
@@ -161,8 +164,8 @@
       </mat-tab>
 
       <!-- Exercise Tab -->
-      <mat-tab [label]="exerciseTab">
-        <form [formGroup]="exerciseForm" class="event-form">
+      <mat-tab [label]="exerciseTab" data-testid="exercise-tab">
+        <form [formGroup]="exerciseForm" class="event-form" data-testid="exercise-form">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ exerciseTypeLabel }}</mat-label>
             <mat-select formControlName="exerciseTypeId">
@@ -221,8 +224,8 @@
       </mat-tab>
 
       <!-- Note Tab -->
-      <mat-tab [label]="noteTab">
-        <form [formGroup]="noteForm" class="event-form">
+      <mat-tab [label]="noteTab" data-testid="note-tab">
+        <form [formGroup]="noteForm" class="event-form" data-testid="note-form">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ noteLabel }}</mat-label>
             <textarea
@@ -242,7 +245,7 @@
 
     <!-- Footer Actions -->
     <div class="modal-footer">
-      <button mat-stroked-button (click)="onClose()" [disabled]="isSubmitting()">
+      <button mat-stroked-button (click)="onClose()" [disabled]="isSubmitting()" data-testid="add-event-cancel-button">
         {{ cancelLabel }}
       </button>
       <button
@@ -250,6 +253,7 @@
         color="primary"
         (click)="onSubmit()"
         [disabled]="isSubmitting() || getCurrentForm().invalid"
+        data-testid="add-event-submit-button"
       >
         @if (isSubmitting()) {
           <mat-spinner diameter="20" class="inline-spinner"></mat-spinner>

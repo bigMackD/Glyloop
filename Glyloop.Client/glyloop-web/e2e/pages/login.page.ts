@@ -1,98 +1,157 @@
-/**
- * Login Page Object Model
- * Demonstrates Playwright best practices:
- * - Use locators for resilient element selection
- * - Page Object Model for maintainable tests
- * - Meaningful method names that describe user actions
- */
-
 import { Page, Locator } from '@playwright/test';
-import { BasePage } from './base.page';
 
-export class LoginPage extends BasePage {
-  // Locators - using data-testid for resilient selection
+/**
+ * Page Object Model for Login Page
+ * Encapsulates interactions with the login page
+ */
+export class LoginPage {
+  readonly page: Page;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
+  readonly passwordVisibilityToggle: Locator;
   readonly loginButton: Locator;
   readonly errorMessage: Locator;
-  readonly successMessage: Locator;
+  readonly emailError: Locator;
+  readonly passwordError: Locator;
+  readonly registerLink: Locator;
+  readonly loginForm: Locator;
+  readonly loginLogo: Locator;
+  readonly loginTitle: Locator;
+  readonly loadingSpinner: Locator;
 
   constructor(page: Page) {
-    super(page);
-    
-    // Initialize locators using best practices
-    this.emailInput = page.locator('input[type="email"]');
-    this.passwordInput = page.locator('input[type="password"]');
-    this.loginButton = page.locator('button[type="submit"]');
-    this.errorMessage = page.locator('[data-testid="error-message"]');
-    this.successMessage = page.locator('[data-testid="success-message"]');
+    this.page = page;
+    this.emailInput = page.locator('[data-testid="login-email-input"]');
+    this.passwordInput = page.locator('[data-testid="login-password-input"]');
+    this.passwordVisibilityToggle = page.locator('[data-testid="login-password-visibility-toggle"]');
+    this.loginButton = page.locator('[data-testid="login-submit-button"]');
+    this.errorMessage = page.locator('[data-testid="login-error-message"]');
+    this.emailError = page.locator('[data-testid="login-email-error"]');
+    this.passwordError = page.locator('[data-testid="login-password-error"]');
+    this.registerLink = page.locator('[data-testid="register-link"]');
+    this.loginForm = page.locator('[data-testid="login-form"]');
+    this.loginLogo = page.locator('[data-testid="login-logo"]');
+    this.loginTitle = page.locator('[data-testid="login-title"]');
+    this.loadingSpinner = page.locator('[data-testid="login-submit-loading"]');
   }
 
   /**
-   * Navigate to login page
+   * Navigate to the login page
    */
   async navigateToLogin(): Promise<void> {
-    await this.goto('/auth/login');
-    await this.waitForPageLoad();
+    await this.page.goto('/login');
   }
 
   /**
-   * Perform login action
+   * Fill in the login form and submit
+   * @param email - User email
+   * @param password - User password
    */
   async login(email: string, password: string): Promise<void> {
-    await this.fillInput(this.emailInput, email);
-    await this.fillInput(this.passwordInput, password);
-    await this.clickElement(this.loginButton);
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
   }
 
   /**
    * Fill email field
+   * @param email - User email
    */
-  async enterEmail(email: string): Promise<void> {
-    await this.fillInput(this.emailInput, email);
+  async fillEmail(email: string): Promise<void> {
+    await this.emailInput.fill(email);
   }
 
   /**
    * Fill password field
+   * @param password - User password
    */
-  async enterPassword(password: string): Promise<void> {
-    await this.fillInput(this.passwordInput, password);
+  async fillPassword(password: string): Promise<void> {
+    await this.passwordInput.fill(password);
   }
 
   /**
-   * Click login button
+   * Click the login button
    */
   async clickLogin(): Promise<void> {
-    await this.clickElement(this.loginButton);
+    await this.loginButton.click();
   }
 
   /**
-   * Get error message text
+   * Toggle password visibility
    */
-  async getErrorMessage(): Promise<string | null> {
-    return await this.getTextContent(this.errorMessage);
+  async togglePasswordVisibility(): Promise<void> {
+    await this.passwordVisibilityToggle.click();
   }
 
   /**
-   * Get success message text
+   * Get the error message text
    */
-  async getSuccessMessage(): Promise<string | null> {
-    return await this.getTextContent(this.successMessage);
+  async getErrorMessage(): Promise<string> {
+    return await this.errorMessage.textContent() || '';
   }
 
   /**
-   * Check if logged in (by checking if redirected to dashboard)
+   * Get the email error message text
    */
-  async isLoggedIn(): Promise<boolean> {
-    await this.page.waitForURL('**/dashboard', { timeout: 5000 }).catch(() => false);
-    return this.page.url().includes('/dashboard');
+  async getEmailErrorMessage(): Promise<string> {
+    return await this.emailError.textContent() || '';
   }
 
   /**
-   * Check if error message is displayed
+   * Get the password error message text
    */
-  async hasErrorMessage(): Promise<boolean> {
-    return await this.isVisible(this.errorMessage);
+  async getPasswordErrorMessage(): Promise<string> {
+    return await this.passwordError.textContent() || '';
+  }
+
+  /**
+   * Check if login button is disabled
+   */
+  async isLoginButtonDisabled(): Promise<boolean> {
+    return await this.loginButton.isDisabled();
+  }
+
+  /**
+   * Check if the form is displayed
+   */
+  async isFormDisplayed(): Promise<boolean> {
+    return await this.loginForm.isVisible();
+  }
+
+  /**
+   * Wait for error message to appear
+   */
+  async waitForError(): Promise<void> {
+    await this.errorMessage.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Navigate to register page via link
+   */
+  async clickRegisterLink(): Promise<void> {
+    await this.registerLink.click();
+  }
+
+  /**
+   * Get password input type (to check visibility)
+   */
+  async getPasswordInputType(): Promise<string | null> {
+    return await this.passwordInput.getAttribute('type');
+  }
+
+  /**
+   * Trigger validation by blurring fields
+   */
+  async triggerEmailValidation(): Promise<void> {
+    await this.emailInput.click();
+    await this.emailInput.blur();
+  }
+
+  /**
+   * Trigger password validation by blurring field
+   */
+  async triggerPasswordValidation(): Promise<void> {
+    await this.passwordInput.click();
+    await this.passwordInput.blur();
   }
 }
-

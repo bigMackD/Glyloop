@@ -1,8 +1,9 @@
-<div class="dashboard-page min-h-screen bg-app-bg p-6">
+<div class="dashboard-page min-h-screen bg-app-bg p-6" data-testid="dashboard-page">
   <!-- Header with Title and Add Event Button -->
   <header class="dashboard-header flex items-center justify-between mb-6">
-    <h1 class="text-3xl font-bold text-text-primary m-0">{{ pageTitle }}</h1>
+    <h1 class="text-3xl font-bold text-text-primary m-0" data-testid="dashboard-title">{{ pageTitle }}</h1>
     <button
+      data-testid="add-event-button"
       (click)="openAddEventModal()"
       class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-from to-primary-to hover:opacity-90 text-white rounded-lg font-medium transition-all shadow-lg shadow-primary/30"
     >
@@ -26,7 +27,7 @@
       ></app-chart-toolbar>
 
       <!-- Chart -->
-      <div class="chart-container bg-card-bg border border-card-border rounded-xl p-6">
+      <div class="chart-container bg-card-bg border border-card-border rounded-xl p-6" data-testid="glucose-chart">
         <app-cgm-chart
           [chartData]="chartData()"
           [highlightEventId]="selectedEventId()"
@@ -45,7 +46,7 @@
       </div>
 
       <!-- History Panel -->
-      <div class="history-section">
+      <div class="history-section" data-testid="events-list">
         <app-history-panel
           [initialFilters]="historyFilters()"
           [selectedEventId]="selectedEventId()"

@@ -1,4 +1,4 @@
-<div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+<div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900" data-testid="login-page">
   <app-header />
   <div class="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-8">
@@ -8,13 +8,14 @@
         <img
           src="assets/glyloop_logo.png"
           alt="Glyloop logo"
+          data-testid="login-logo"
           class="mx-auto h-auto w-96 max-w-full"
         />
       </div>
-      <h1 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+      <h1 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white" data-testid="login-title">
         {{ pageTitle }}
       </h1>
-      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400" data-testid="login-subtitle">
         {{ pageSubtitle }}
       </p>
     </div>
@@ -26,7 +27,7 @@
 
     <!-- Registration Success Message -->
     @if (showRegistrationSuccess()) {
-      <div class="rounded-md bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800" role="alert">
+      <div class="rounded-md bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800" role="alert" data-testid="registration-success-message">
         <div class="flex">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
