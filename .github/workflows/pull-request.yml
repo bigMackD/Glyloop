@@ -1,0 +1,233 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  NODE_VERSION: '20.x'
+
+jobs:
+  # Backend Linting
+  lint-backend:
+    name: Lint Backend (.NET)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: Restore dependencies
+        working-directory: ./Glyloop.API
+        run: dotnet restore
+      
+      - name: Format check
+        working-directory: ./Glyloop.API
+        run: dotnet format --verify-no-changes --no-restore
+
+  # Frontend Linting
+  lint-frontend:
+    name: Lint Frontend (Angular)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './Glyloop.Client/glyloop-web/package-lock.json'
+      
+      - name: Install dependencies
+        working-directory: ./Glyloop.Client/glyloop-web
+        run: npm ci
+      
+      - name: Run ESLint
+        working-directory: ./Glyloop.Client/glyloop-web
+        run: npm run lint
+
+  # Backend Unit Tests
+  test-backend:
+    name: Test Backend (.NET)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: Restore dependencies
+        working-directory: ./Glyloop.API
+        run: dotnet restore
+      
+      - name: Build solution
+        working-directory: ./Glyloop.API
+        run: dotnet build --no-restore --configuration Release
+      
+      - name: Run unit tests with coverage
+        working-directory: ./Glyloop.API
+        run: |
+          dotnet test \
+            --no-build \
+            --configuration Release \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults \
+            --logger "trx;LogFileName=test-results.trx" \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: backend-test-results
+          path: ./Glyloop.API/TestResults/**/*.trx
+      
+      - name: Upload coverage results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: backend-coverage
+          path: ./Glyloop.API/TestResults/**/coverage.opencover.xml
+
+  # Frontend Unit Tests
+  test-frontend:
+    name: Test Frontend (Jest)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './Glyloop.Client/glyloop-web/package-lock.json'
+      
+      - name: Install dependencies
+        working-directory: ./Glyloop.Client/glyloop-web
+        run: npm ci
+      
+      - name: Run tests with coverage
+        working-directory: ./Glyloop.Client/glyloop-web
+        run: npm run test:coverage -- --ci --maxWorkers=2
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: frontend-test-results
+          path: ./Glyloop.Client/glyloop-web/coverage/
+      
+      - name: Upload coverage results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: frontend-coverage
+          path: ./Glyloop.Client/glyloop-web/coverage/lcov.info
+
+  # Status Comment - Only runs if all previous jobs pass
+  status-comment:
+    name: PR Status Comment
+    runs-on: ubuntu-latest
+    needs: [lint-backend, lint-frontend, test-backend, test-frontend]
+    if: always()
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - name: Download backend test results
+        uses: actions/download-artifact@v6
+        with:
+          name: backend-test-results
+          path: ./backend-results
+        continue-on-error: true
+      
+      - name: Download frontend test results
+        uses: actions/download-artifact@v6
+        with:
+          name: frontend-test-results
+          path: ./frontend-results
+        continue-on-error: true
+      
+      - name: Check job statuses
+        id: check-status
+        run: |
+          BACKEND_LINT="${{ needs.lint-backend.result }}"
+          FRONTEND_LINT="${{ needs.lint-frontend.result }}"
+          BACKEND_TEST="${{ needs.test-backend.result }}"
+          FRONTEND_TEST="${{ needs.test-frontend.result }}"
+          
+          if [[ "$BACKEND_LINT" == "success" && "$FRONTEND_LINT" == "success" && "$BACKEND_TEST" == "success" && "$FRONTEND_TEST" == "success" ]]; then
+            echo "status=✅ All checks passed!" >> $GITHUB_OUTPUT
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ Some checks failed" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "backend_lint=$BACKEND_LINT" >> $GITHUB_OUTPUT
+          echo "frontend_lint=$FRONTEND_LINT" >> $GITHUB_OUTPUT
+          echo "backend_test=$BACKEND_TEST" >> $GITHUB_OUTPUT
+          echo "frontend_test=$FRONTEND_TEST" >> $GITHUB_OUTPUT
+      
+      - name: Create status emoji
+        id: emoji
+        run: |
+          get_emoji() {
+            case $1 in
+              success) echo "✅" ;;
+              failure) echo "❌" ;;
+              cancelled) echo "⚠️" ;;
+              *) echo "⏭️" ;;
+            esac
+          }
+          
+          echo "backend_lint=$(get_emoji ${{ steps.check-status.outputs.backend_lint }})" >> $GITHUB_OUTPUT
+          echo "frontend_lint=$(get_emoji ${{ steps.check-status.outputs.frontend_lint }})" >> $GITHUB_OUTPUT
+          echo "backend_test=$(get_emoji ${{ steps.check-status.outputs.backend_test }})" >> $GITHUB_OUTPUT
+          echo "frontend_test=$(get_emoji ${{ steps.check-status.outputs.frontend_test }})" >> $GITHUB_OUTPUT
+      
+      - name: Comment PR
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const statusMessage = `## ${{ steps.check-status.outputs.emoji }} PR Status Report
+            
+            ### Code Quality
+            - ${{ steps.emoji.outputs.backend_lint }} **Backend Lint**: \`${{ steps.check-status.outputs.backend_lint }}\`
+            - ${{ steps.emoji.outputs.frontend_lint }} **Frontend Lint**: \`${{ steps.check-status.outputs.frontend_lint }}\`
+            
+            ### Unit Tests
+            - ${{ steps.emoji.outputs.backend_test }} **Backend Tests (.NET)**: \`${{ steps.check-status.outputs.backend_test }}\`
+            - ${{ steps.emoji.outputs.frontend_test }} **Frontend Tests (Jest)**: \`${{ steps.check-status.outputs.frontend_test }}\`
+            
+            ### Coverage Reports
+            📊 Test coverage artifacts have been uploaded and are available in the workflow run.
+            
+            ---
+            *Workflow run: [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: statusMessage
+            });
+
