@@ -81,8 +81,8 @@ public class ListEventsQueryHandler : IRequestHandler<ListEventsQuery, Result<Pa
             FoodEvent food => $"{food.Carbohydrates.Grams}g carbs",
             InsulinEvent insulin => $"{insulin.Dose.Units}U {insulin.InsulinType}",
             ExerciseEvent exercise => $"{exercise.Duration.Minutes}min",
-            NoteEvent note => note.Text.Text.Length > 50 
-                ? $"{note.Text.Text[..47]}..." 
+            NoteEvent note => note.Text.Text.Length > 50
+                ? $"{note.Text.Text[..47]}..."
                 : note.Text.Text,
             _ => "Unknown event"
         };

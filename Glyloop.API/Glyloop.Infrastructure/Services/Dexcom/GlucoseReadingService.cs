@@ -129,7 +129,7 @@ public class GlucoseReadingService : IGlucoseReadingService
             var readings = result.Value.Records;
             if (readings == null || readings.Count == 0)
             {
-                _logger.LogInformation("No readings found between {StartTime} and {EndTime} for user {UserId}", 
+                _logger.LogInformation("No readings found between {StartTime} and {EndTime} for user {UserId}",
                     startTime, endTime, userId.Value);
                 return Result.Success<IReadOnlyList<GlucoseReading>>(Array.Empty<GlucoseReading>());
             }

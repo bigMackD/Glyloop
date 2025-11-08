@@ -36,7 +36,7 @@ public class GetEventOutcomeQueryHandler : IRequestHandler<GetEventOutcomeQuery,
         var userId = UserId.Create(_currentUserService.UserId);
 
         var @event = await _eventRepository.GetByIdAsync(request.EventId, cancellationToken);
-        
+
         if (@event == null)
         {
             return Result.Failure<EventOutcomeDto>(

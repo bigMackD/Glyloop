@@ -162,7 +162,7 @@ public class AuthController : ControllerBase
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var emailClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-        
+
         if (userIdClaim is null || emailClaim is null || !Guid.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized(new ProblemDetails
@@ -172,7 +172,7 @@ public class AuthController : ControllerBase
                 Status = StatusCodes.Status401Unauthorized
             });
         }
-        
+
         var response = new SessionResponse(userId, emailClaim);
         return Ok(response);
     }

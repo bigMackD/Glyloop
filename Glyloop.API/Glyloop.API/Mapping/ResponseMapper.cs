@@ -197,7 +197,7 @@ public static class ResponseMapper
     {
         var readingsBelowRange = dto.TotalReadings > 0 ? dto.TotalReadings - dto.InRangeCount - (dto.TotalReadings - dto.InRangeCount) : 0;
         var readingsAboveRange = dto.TotalReadings - dto.InRangeCount - readingsBelowRange;
-        
+
         return new TimeInRangeResponse(
             TimeInRangePercentage: dto.TirPercentage ?? 0m,
             TotalReadings: dto.TotalReadings,

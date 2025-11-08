@@ -17,7 +17,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     where TResponse : Result
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
-    
+
     // Cache delegates per TResponse type to avoid reflection on every call
     private static readonly ConcurrentDictionary<Type, Func<Error, object>> FailureFactoryCache = new();
 

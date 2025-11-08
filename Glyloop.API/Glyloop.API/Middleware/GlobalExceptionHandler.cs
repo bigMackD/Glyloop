@@ -67,34 +67,34 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         return exception switch
         {
-            ArgumentException or ArgumentNullException => 
-                (StatusCodes.Status400BadRequest, 
-                 "Bad Request", 
+            ArgumentException or ArgumentNullException =>
+                (StatusCodes.Status400BadRequest,
+                 "Bad Request",
                  exception.Message),
 
-            InvalidOperationException => 
-                (StatusCodes.Status400BadRequest, 
-                 "Invalid Operation", 
+            InvalidOperationException =>
+                (StatusCodes.Status400BadRequest,
+                 "Invalid Operation",
                  exception.Message),
 
-            UnauthorizedAccessException => 
-                (StatusCodes.Status401Unauthorized, 
-                 "Unauthorized", 
+            UnauthorizedAccessException =>
+                (StatusCodes.Status401Unauthorized,
+                 "Unauthorized",
                  "You are not authorized to access this resource."),
 
-            KeyNotFoundException => 
-                (StatusCodes.Status404NotFound, 
-                 "Not Found", 
+            KeyNotFoundException =>
+                (StatusCodes.Status404NotFound,
+                 "Not Found",
                  exception.Message),
 
-            TimeoutException => 
-                (StatusCodes.Status408RequestTimeout, 
-                 "Request Timeout", 
+            TimeoutException =>
+                (StatusCodes.Status408RequestTimeout,
+                 "Request Timeout",
                  "The request timed out. Please try again."),
 
-            _ => 
-                (StatusCodes.Status500InternalServerError, 
-                 "Internal Server Error", 
+            _ =>
+                (StatusCodes.Status500InternalServerError,
+                 "Internal Server Error",
                  exception.Message)
         };
     }

@@ -169,7 +169,7 @@ public class DexcomApiClient : IDexcomApiClient
                 // Handle 429 rate limiting
                 var retryAfter = response.Headers.RetryAfter?.Delta?.TotalSeconds ?? 60;
                 _logger.LogWarning("Rate limited by Dexcom API. Retry after {Seconds}s", retryAfter);
-                
+
                 return Result.Failure<GlucoseReadingsResponse>(
                     Error.Create(
                         "Dexcom.RateLimited",
@@ -186,9 +186,9 @@ public class DexcomApiClient : IDexcomApiClient
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                _logger.LogError("Dexcom API error: {StatusCode} - {Content}", 
+                _logger.LogError("Dexcom API error: {StatusCode} - {Content}",
                     response.StatusCode, errorContent);
-                
+
                 return Result.Failure<GlucoseReadingsResponse>(
                     Error.Create("Dexcom.ApiError", $"API returned status {response.StatusCode}."));
             }
@@ -203,7 +203,7 @@ public class DexcomApiClient : IDexcomApiClient
                     Error.Create("Dexcom.InvalidResponse", "Failed to deserialize API response."));
             }
 
-            _logger.LogInformation("Retrieved {Count} glucose readings from Dexcom", 
+            _logger.LogInformation("Retrieved {Count} glucose readings from Dexcom",
                 readings.Records.Count);
 
             return Result.Success(readings);
@@ -233,7 +233,7 @@ public class DexcomApiClient : IDexcomApiClient
         {
             var retryAfter = response.Headers.RetryAfter?.Delta?.TotalSeconds ?? 60;
             _logger.LogWarning("Rate limited by Dexcom OAuth. Retry after {Seconds}s", retryAfter);
-            
+
             return Result.Failure<OAuthTokenResponse>(
                 Error.Create(
                     "Dexcom.RateLimited",
@@ -264,7 +264,7 @@ public class DexcomApiClient : IDexcomApiClient
             }
 
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
-            _logger.LogError("Dexcom OAuth failed: {StatusCode} - {Content}", 
+            _logger.LogError("Dexcom OAuth failed: {StatusCode} - {Content}",
                 response.StatusCode, content);
 
             return Result.Failure<OAuthTokenResponse>(

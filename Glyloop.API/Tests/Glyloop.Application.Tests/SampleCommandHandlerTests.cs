@@ -27,12 +27,12 @@ public class SampleCommandHandlerTests
     {
         // Arrange - Initialize AutoFixture and mocks
         _fixture = new Fixture();
-        
+
         // Create mocks using NSubstitute
         _mockEventRepository = Substitute.For<IEventRepository>();
         _mockUnitOfWork = Substitute.For<IUnitOfWork>();
         _mockTimeProvider = Substitute.For<ITimeProvider>();
-        
+
         // Set up common mock behavior
         _mockTimeProvider.UtcNow.Returns(new DateTimeOffset(2025, 11, 2, 12, 0, 0, TimeSpan.Zero));
     }
@@ -46,15 +46,15 @@ public class SampleCommandHandlerTests
         // Arrange
         var userId = UserId.Create(Guid.NewGuid());
         var carbohydrate = Carbohydrate.Create(45).Value;
-        
+
         // Configure mock to return success
         _mockUnitOfWork.SaveChangesAsync(Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(1));
-        
+
         // Act
         // This is a placeholder - replace with actual command handler logic
         await _mockUnitOfWork.SaveChangesAsync(CancellationToken.None);
-        
+
         // Assert
         await _mockUnitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
@@ -67,7 +67,7 @@ public class SampleCommandHandlerTests
     {
         // Arrange
         var invalidUserId = Guid.Empty;
-        
+
         // Act & Assert
         Assert.Throws<ArgumentException>(() => UserId.Create(invalidUserId));
     }
@@ -81,15 +81,15 @@ public class SampleCommandHandlerTests
         // Arrange
         var userId = UserId.Create(Guid.NewGuid());
         var eventId = Guid.NewGuid();
-        
+
         // Configure mock to capture arguments
         _mockEventRepository
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<Glyloop.Domain.Aggregates.Event.Event?>(null));
-        
+
         // Act
         await _mockEventRepository.GetByIdAsync(eventId, CancellationToken.None);
-        
+
         // Assert - Verify method was called with specific argument
         await _mockEventRepository.Received(1)
             .GetByIdAsync(Arg.Is<Guid>(g => g == eventId), Arg.Any<CancellationToken>());
@@ -104,16 +104,16 @@ public class SampleCommandHandlerTests
         // Arrange
         var userId = UserId.Create(Guid.NewGuid());
         var eventId = Guid.NewGuid();
-        
+
         // Configure mocks
         _mockEventRepository
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<Glyloop.Domain.Aggregates.Event.Event?>(null));
-        
+
         // Act - Simulate command handler flow
         await _mockEventRepository.GetByIdAsync(eventId, CancellationToken.None);
         await _mockUnitOfWork.SaveChangesAsync(CancellationToken.None);
-        
+
         // Assert - Verify correct sequence of calls
         Received.InOrder(async () =>
         {
@@ -133,7 +133,7 @@ public class SampleCommandHandlerTests
         _mockEventRepository
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns<Glyloop.Domain.Aggregates.Event.Event?>(x => throw new InvalidOperationException("Database error"));
-        
+
         // Act & Assert
         Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await _mockEventRepository.GetByIdAsync(eventId, CancellationToken.None));
@@ -147,7 +147,7 @@ public class SampleCommandHandlerTests
     {
         // Arrange
         var userIds = _fixture.CreateMany<Guid>(5).ToList();
-        
+
         foreach (var id in userIds)
         {
             // Configure mock to return different results for each call
@@ -155,12 +155,12 @@ public class SampleCommandHandlerTests
                 .GetByIdAsync(id, Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult<Glyloop.Domain.Aggregates.Event.Event?>(null));
         }
-        
+
         // Act
-        var tasks = userIds.Select(id => 
+        var tasks = userIds.Select(id =>
             _mockEventRepository.GetByIdAsync(id, CancellationToken.None));
         await Task.WhenAll(tasks);
-        
+
         // Assert
         Assert.That(userIds, Has.Count.EqualTo(5));
         await _mockEventRepository.Received(5)
@@ -178,11 +178,11 @@ public class SampleCommandHandlerTests
         // Arrange
         var date = DateTimeOffset.Parse(dateString);
         _mockTimeProvider.UtcNow.Returns(date);
-        
+
         // Act
         var actualDate = _mockTimeProvider.UtcNow;
         await Task.CompletedTask; // Simulate async operation
-        
+
         // Assert
         Assert.That(actualDate, Is.EqualTo(date));
     }
@@ -196,7 +196,7 @@ public class SampleCommandHandlerTests
         // Arrange
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
-        
+
         _mockEventRepository
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns<object>(x =>
@@ -205,7 +205,7 @@ public class SampleCommandHandlerTests
                 token.ThrowIfCancellationRequested();
                 return Task.FromResult<object?>(null);
             });
-        
+
         // Act & Assert
         Assert.ThrowsAsync<OperationCanceledException>(async () =>
             await _mockEventRepository.GetByIdAsync(Guid.NewGuid(), cancellationTokenSource.Token));
