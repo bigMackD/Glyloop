@@ -5,6 +5,7 @@
     [matMenuTriggerFor]="userDropdown"
     attr.aria-label="User menu"
     i18n-attr.aria-label="@@app.shell.userMenu.label"
+    data-testid="user-menu-button"
   >
     @if (user().avatarUrl) {
       <img
@@ -39,6 +40,7 @@
         mat-menu-item
         [class.user-menu__item--logout]="item.id === 'logout'"
         (click)="onItemClick(item)"
+        [attr.data-testid]="'user-menu-' + item.id"
       >
         @switch (item.id) {
           @case ('account') {
