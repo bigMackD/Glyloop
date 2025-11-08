@@ -1,8 +1,9 @@
 @if (open()) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" (click)="onCancel()">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" (click)="onCancel()" (keydown.escape)="onCancel()" role="button" tabindex="0" [attr.aria-label]="'Close dialog'">
     <div
       class="bg-gray-900 rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-800"
       (click)="$event.stopPropagation()"
+      (keydown)="$event.stopPropagation()"
       role="dialog"
       aria-modal="true"
       aria-labelledby="unlink-dialog-title"

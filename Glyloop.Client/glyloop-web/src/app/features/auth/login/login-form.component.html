@@ -35,7 +35,6 @@
         autocomplete="email"
         i18n-placeholder="@@login.form.email.placeholder"
         placeholder="you@example.com"
-        [autofocus]="autofocusEmail()"
         [attr.aria-describedby]="emailControl.invalid && emailControl.touched ? 'email-error' : null"
         [attr.aria-invalid]="emailControl.invalid && emailControl.touched" />
       @if (emailControl.invalid && emailControl.touched) {

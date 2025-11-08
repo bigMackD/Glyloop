@@ -18,7 +18,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return http.get(sessionUrl, { withCredentials: true }).pipe(
     map(() => true), // Session valid
-    catchError((err) => {
+    catchError(() => {
       // Session invalid or error - redirect to login
       const redirectUrl = state.url;
       router.navigate(['/login'], {

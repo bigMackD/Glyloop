@@ -17,9 +17,9 @@ public static class AuthenticationConfiguration
         IConfiguration configuration)
     {
         var jwtSettings = configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["SecretKey"] 
+        var secretKey = jwtSettings["SecretKey"]
             ?? throw new InvalidOperationException("JWT SecretKey is not configured");
-        
+
         var key = Encoding.UTF8.GetBytes(secretKey);
 
         services.AddAuthentication(options =>

@@ -61,7 +61,7 @@ public static class DependencyInjection
         services.AddDbContext<GlyloopDbContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("Default");
-            
+
             options.UseNpgsql(connectionString, npgsqlOptions =>
             {
                 // Retry on transient failures (network issues, etc.)

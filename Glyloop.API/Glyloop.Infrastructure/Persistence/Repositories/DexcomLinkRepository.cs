@@ -38,7 +38,7 @@ public class DexcomLinkRepository : IDexcomLinkRepository
     public async Task<DexcomLink?> GetActiveByUserIdAsync(UserId userId, CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow;
-        
+
         return await _context.DexcomLinks
             .Where(l => l.UserId == userId && l.TokenExpiresAt > now)
             .OrderByDescending(l => l.TokenExpiresAt)
@@ -50,7 +50,7 @@ public class DexcomLinkRepository : IDexcomLinkRepository
     {
         // Get links expiring within the next hour (proactive refresh threshold)
         var refreshThreshold = DateTimeOffset.UtcNow.AddHours(1);
-        
+
         return await _context.DexcomLinks
             .Where(l => l.TokenExpiresAt < refreshThreshold)
             .OrderBy(l => l.TokenExpiresAt)

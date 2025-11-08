@@ -59,14 +59,14 @@ public class TestDataSeeder
         };
 
         _logger.LogInformation("Creating test user '{Email}'...", TestUserEmail);
-        
+
         var result = await _userManager.CreateAsync(testUser, TestUserPassword);
 
         if (result.Succeeded)
         {
             _logger.LogInformation(
-                "✓ Test user '{Email}' created successfully with ID: {UserId}", 
-                TestUserEmail, 
+                "✓ Test user '{Email}' created successfully with ID: {UserId}",
+                TestUserEmail,
                 testUser.Id);
             return true;
         }

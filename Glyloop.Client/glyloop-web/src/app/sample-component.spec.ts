@@ -10,8 +10,7 @@
  * - Use beforeEach and afterEach for setup and teardown
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { render, screen, fireEvent, waitFor } from '@testing-library/angular';
+import { waitFor } from '@testing-library/angular';
 import '@testing-library/jest-dom';
 
 // Mock component for demonstration
@@ -34,7 +33,6 @@ class SampleComponent {
 
 describe('SampleComponent', () => {
   let component: SampleComponent;
-  let fixture: ComponentFixture<SampleComponent>;
 
   /**
    * Setup: Use beforeEach for test initialization

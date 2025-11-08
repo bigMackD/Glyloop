@@ -45,7 +45,7 @@ public class FeatureFlagHealthCheck : Microsoft.Extensions.Diagnostics.HealthChe
         CancellationToken cancellationToken = default)
     {
         var featureFlags = _configuration.GetSection("FeatureFlags");
-        
+
         if (featureFlags.Exists())
         {
             return Task.FromResult(

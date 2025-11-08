@@ -37,7 +37,7 @@ export class EventDetailsDrawerComponent {
   readonly event = input<EventResponseDto | undefined>(undefined);
 
   // Output
-  readonly close = output<void>();
+  readonly closeDrawer = output<void>();
 
   // Outcome state
   readonly outcome = signal<EventOutcomeResponseDto | null>(null);
@@ -149,7 +149,7 @@ export class EventDetailsDrawerComponent {
    * Closes the drawer
    */
   onClose(): void {
-    this.close.emit();
+    this.closeDrawer.emit();
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject, OnInit, OnDestroy, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ChartToolbarComponent } from './chart-toolbar/chart-toolbar.component';
@@ -11,10 +11,7 @@ import { ChartDataService } from '../../core/services/chart-data.service';
 import { EventsService } from '../../core/services/events.service';
 import {
   ChartRange,
-  ChartDataResponseDto,
-  TimeInRangeResponseDto,
-  HistoryFilters,
-  EventResponseDto
+  HistoryFilters
 } from '../../core/models/dashboard.types';
 import { catchError, of } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -212,7 +209,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   /**
    * Handles successful event creation
    */
-  onEventCreated(event: EventResponseDto): void {
+  onEventCreated(): void {
     this.showSnackbar(this.eventCreatedMessage);
 
     // Refresh chart data to include the new event
@@ -228,7 +225,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   /**
    * Handles chart errors
    */
-  private handleChartError(err: any): void {
+  private handleChartError(err: { status?: number }): void {
     console.error('Chart data error:', err);
 
     if (err.status === 429 || err.status >= 500) {

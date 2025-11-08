@@ -1,5 +1,5 @@
-<div class="add-event-modal-overlay" [class.open]="open()" (click)="onClose()" data-testid="add-event-dialog">
-  <div class="modal-content" (click)="$event.stopPropagation()" role="dialog" [attr.aria-modal]="true" [attr.aria-labelledby]="'modal-title'">
+<div class="add-event-modal-overlay" [class.open]="open()" (click)="onClose()" (keydown.escape)="onClose()" role="button" tabindex="0" [attr.aria-label]="'Close modal'" data-testid="add-event-dialog">
+  <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="dialog" [attr.aria-modal]="true" [attr.aria-labelledby]="'modal-title'">
     <!-- Header -->
     <div class="modal-header">
       <h2 id="modal-title" class="text-xl font-semibold" data-testid="add-event-title">{{ title }}</h2>

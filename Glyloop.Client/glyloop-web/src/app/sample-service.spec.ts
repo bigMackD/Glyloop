@@ -3,22 +3,21 @@
  * Demonstrates testing HTTP services, observables, and error handling
  */
 
-import { TestBed } from '@angular/core/testing';
 import { of, throwError, delay } from 'rxjs';
 
 // Mock service for demonstration
 class SampleService {
-  constructor(private http?: any) {}
+  constructor(private http?: unknown) {}
 
-  getData(): any {
+  getData(): unknown {
     return of({ data: 'test data' });
   }
 
-  getDataWithError(): any {
+  getDataWithError(): unknown {
     return throwError(() => new Error('API Error'));
   }
 
-  getDataAsync(): Promise<any> {
+  getDataAsync(): Promise<unknown> {
     return Promise.resolve({ data: 'async data' });
   }
 
@@ -29,7 +28,7 @@ class SampleService {
 
 describe('SampleService', () => {
   let service: SampleService;
-  let httpSpy: any;
+  let httpSpy: unknown;
 
   beforeEach(() => {
     // Create mock HTTP client
@@ -61,7 +60,7 @@ describe('SampleService', () => {
 
       // Act
       service.getData().subscribe({
-        next: (result: any) => {
+        next: (result: unknown) => {
           // Assert
           expect(result).toEqual(expectedData);
           done();
@@ -143,7 +142,7 @@ describe('SampleService', () => {
 
       // Assert
       expect(httpSpy.get).toHaveBeenCalledWith('/api/users');
-      result$.subscribe((data: any) => {
+      result$.subscribe((data: unknown) => {
         expect(data).toEqual(mockResponse);
       });
     });
@@ -162,7 +161,7 @@ describe('SampleService', () => {
 
       // Assert
       expect(httpSpy.post).toHaveBeenCalledWith('/api/users', postData);
-      result$.subscribe((data: any) => {
+      result$.subscribe((data: unknown) => {
         expect(data).toEqual(mockResponse);
       });
     });
@@ -180,7 +179,7 @@ describe('SampleService', () => {
       // Act
       httpSpy.get('/api/users/999').subscribe({
         next: () => done.fail('Should have thrown error'),
-        error: (error: any) => {
+        error: (error: { status?: number; message?: string }) => {
           // Assert
           expect(error.status).toBe(404);
           expect(error.message).toBe('Not Found');
@@ -276,8 +275,8 @@ describe('SampleService', () => {
 
     it('should handle null/undefined gracefully', () => {
       // These would need proper null handling in the actual service
-      expect(() => service.processData(null as any)).toBeDefined();
-      expect(() => service.processData(undefined as any)).toBeDefined();
+      expect(() => service.processData(null as never)).toBeDefined();
+      expect(() => service.processData(undefined as never)).toBeDefined();
     });
   });
 });

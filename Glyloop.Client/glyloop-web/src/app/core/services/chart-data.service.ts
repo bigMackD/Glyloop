@@ -1,16 +1,14 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   Observable,
   BehaviorSubject,
   timer,
-  throwError,
   EMPTY,
   Subject,
   retryWhen,
   mergeMap,
   tap,
-  catchError,
   takeUntil,
   share
 } from 'rxjs';
@@ -63,7 +61,7 @@ export class ChartDataService {
    */
   fetchChartData(range: ChartRange): Observable<ChartDataResponseDto> {
     const url = this.buildUrl(`/api/chart/data?range=${range}`);
-    const headers: { [key: string]: string } = {};
+    const headers: Record<string, string> = {};
 
     if (this.chartDataETag) {
       headers['If-None-Match'] = this.chartDataETag;
@@ -108,7 +106,7 @@ export class ChartDataService {
    */
   fetchTir(range: ChartRange): Observable<TimeInRangeResponseDto> {
     const url = this.buildUrl(`/api/chart/tir?range=${range}`);
-    const headers: { [key: string]: string } = {};
+    const headers: Record<string, string> = {};
 
     if (this.tirETag) {
       headers['If-None-Match'] = this.tirETag;

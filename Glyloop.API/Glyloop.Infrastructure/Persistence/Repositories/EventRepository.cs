@@ -78,8 +78,8 @@ public class EventRepository : IEventRepository
         pageSize = Math.Clamp(pageSize, 1, 100); // Limit max page size to 100
 
         return await _context.Events
-            .Where(e => e.UserId == userId 
-                && e.EventTime >= from 
+            .Where(e => e.UserId == userId
+                && e.EventTime >= from
                 && e.EventTime <= to)
             .OrderByDescending(e => e.EventTime)
             .Skip((pageNumber - 1) * pageSize)
@@ -96,8 +96,8 @@ public class EventRepository : IEventRepository
         CancellationToken cancellationToken = default)
     {
         var query = _context.Events
-            .Where(e => e.UserId == userId 
-                && e.EventTime >= from 
+            .Where(e => e.UserId == userId
+                && e.EventTime >= from
                 && e.EventTime <= to);
 
         if (eventType.HasValue)

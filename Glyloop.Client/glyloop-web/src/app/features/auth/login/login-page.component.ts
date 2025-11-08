@@ -68,7 +68,7 @@ export class LoginPageComponent implements OnInit {
     this.authApi.login(model)
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: (response) => {
+        next: () => {
           // Login successful - navigate to redirect target
           console.log('Login successful - navigating to redirect target:', this.redirectTo);
           this.router.navigate([this.redirectTo]);

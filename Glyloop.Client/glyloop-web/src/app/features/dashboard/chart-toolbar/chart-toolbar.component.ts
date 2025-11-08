@@ -41,11 +41,12 @@ export class ChartToolbarComponent {
         return $localize`:@@dashboard.toolbar.pollStatus.ok:Up to date`;
       case 'paused':
         return $localize`:@@dashboard.toolbar.pollStatus.paused:Paused`;
-      case 'backoff':
+      case 'backoff': {
         const minutes = Math.round(
           (state.nextRetryAt.getTime() - Date.now()) / 60000
         );
         return $localize`:@@dashboard.toolbar.pollStatus.backoff:Retry in ${minutes}m`;
+      }
       case 'error':
         return $localize`:@@dashboard.toolbar.pollStatus.error:Error`;
       default:

@@ -87,8 +87,8 @@ public class GetChartDataQueryHandler : IRequestHandler<GetChartDataQuery, Resul
         FoodEvent food => $"{food.Carbohydrates.Grams}g carbs",
         InsulinEvent insulin => $"{insulin.Dose.Units}U {insulin.InsulinType}",
         ExerciseEvent exercise => $"{exercise.Duration.Minutes}min exercise",
-        NoteEvent note => note.Text.Text.Length > 30 
-            ? $"{note.Text.Text[..27]}..." 
+        NoteEvent note => note.Text.Text.Length > 30
+            ? $"{note.Text.Text[..27]}..."
             : note.Text.Text,
         _ => "Event"
     };

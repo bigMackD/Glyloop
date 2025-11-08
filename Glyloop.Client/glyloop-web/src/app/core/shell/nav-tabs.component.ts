@@ -10,7 +10,7 @@ import { ShellNavLink } from '../models/shell.types';
  * Renders tabs for Dashboard and Settings with active state and attention indicators.
  */
 @Component({
-  selector: 'nav-tabs',
+  selector: 'app-nav-tabs',
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive, MatIconModule, MatBadgeModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
