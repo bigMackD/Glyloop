@@ -71,8 +71,14 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             if (resultType.IsGenericType)
             {
                 var genericArg = resultType.GetGenericArguments()[0];
+                // Resolve the generic Result.Failure<T>(Error) overload explicitly to avoid ambiguity
                 var failureMethod = typeof(Result)
-                    .GetMethod(nameof(Result.Failure))!
+                    .GetMethods()
+                    .First(m =>
+                        m.Name == nameof(Result.Failure) &&
+                        m.IsGenericMethodDefinition &&
+                        m.GetParameters().Length == 1 &&
+                        m.GetParameters()[0].ParameterType == typeof(Error))
                     .MakeGenericMethod(genericArg);
 
                 // Create and cache a delegate for future calls
