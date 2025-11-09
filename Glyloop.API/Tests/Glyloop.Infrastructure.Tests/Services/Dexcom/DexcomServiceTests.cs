@@ -21,7 +21,7 @@ public class DexcomServiceTests
         var svc = new DexcomService(api, logger);
 
         api.ExchangeCodeForTokensAsync("code", Arg.Any<CancellationToken>())
-            .Returns(Result.Success(new OAuthTokenResponse("acc","ref",3600,"Bearer")));
+            .Returns(Result.Success(new OAuthTokenResponse("acc", "ref", 3600, "Bearer")));
 
         var result = await svc.ExchangeCodeForTokensAsync("code");
 
@@ -62,7 +62,7 @@ public class DexcomServiceTests
         var svc = new DexcomService(api, logger);
 
         api.RefreshTokenAsync("r", Arg.Any<CancellationToken>())
-            .Returns(Result.Success(new OAuthTokenResponse("acc2","ref2",7200,"Bearer")));
+            .Returns(Result.Success(new OAuthTokenResponse("acc2", "ref2", 7200, "Bearer")));
 
         var result = await svc.RefreshTokenAsync("r");
 
