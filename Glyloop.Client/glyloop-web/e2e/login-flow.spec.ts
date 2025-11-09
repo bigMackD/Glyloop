@@ -298,22 +298,19 @@ test.describe('Password Visibility Toggle', () => {
     await loginPage.fillPassword(password);
 
     // Assert - Initially password should be hidden
-    let inputType = await loginPage.getPasswordInputType();
-    expect(inputType).toBe('password');
+    await expect(loginPage.passwordInput).toHaveAttribute('type', 'password');
 
     // Act - Click visibility toggle
     await loginPage.togglePasswordVisibility();
 
     // Assert - Password should be visible
-    inputType = await loginPage.getPasswordInputType();
-    expect(inputType).toBe('text');
+    await expect(loginPage.passwordInput).toHaveAttribute('type', 'text');
 
     // Act - Click visibility toggle again
     await loginPage.togglePasswordVisibility();
 
     // Assert - Password should be hidden again
-    inputType = await loginPage.getPasswordInputType();
-    expect(inputType).toBe('password');
+    await expect(loginPage.passwordInput).toHaveAttribute('type', 'password');
   });
 
   test('should have visibility toggle button', async () => {
@@ -388,6 +385,10 @@ test.describe('Accessibility', () => {
   });
 
   test('should support keyboard navigation', async ({ page }) => {
+    // Ensure elements are rendered before interacting
+    await expect(loginPage.emailInput).toBeVisible();
+    await expect(loginPage.passwordInput).toBeVisible();
+
     // Act - Navigate using Tab key
     await page.keyboard.press('Tab'); // Focus email
     await expect(loginPage.emailInput).toBeFocused();
