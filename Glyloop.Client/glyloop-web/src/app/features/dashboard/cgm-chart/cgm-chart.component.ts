@@ -163,7 +163,9 @@ export class CgmChartComponent implements OnDestroy {
               title: (context) => {
                 // Prefer the hovered scatter point (event) if present
                 const preferred =
-                  context.find((c) => (c.dataset as any).type === 'scatter') ?? context[0];
+                  context.find(
+                    (c) => (c.dataset as { type?: string }).type === 'scatter'
+                  ) ?? context[0];
                 const xValue = preferred?.parsed?.x;
                 if (xValue === null || xValue === undefined) return '';
                 const date = new Date(xValue);
@@ -454,7 +456,10 @@ export class CgmChartComponent implements OnDestroy {
       const meta = this.overlayDatasetMeta[i];
       const radii = meta.map((point) => (point.eventId === eventId ? 12 : 8));
       const datasetIndex = 1 + i; // after glucose dataset
-      (this.chart.data.datasets[datasetIndex] as any).pointRadius = radii;
+      const dataset = this.chart.data.datasets[datasetIndex] as unknown as {
+        pointRadius: number | number[];
+      };
+      dataset.pointRadius = radii;
     }
 
     this.chart.update('none');
@@ -486,7 +491,7 @@ export class CgmChartComponent implements OnDestroy {
   private handleChartHover(event: ChartEvent): void {
     if (!this.chart) return;
     // Ensure we have a mouse event on a canvas
-    const nativeEvt = (event as any).native as Event | null | undefined;
+    const nativeEvt = (event as unknown as { native?: Event }).native ?? null;
     if (!(nativeEvt instanceof MouseEvent)) return;
     const target = nativeEvt.target;
     if (!(target instanceof HTMLCanvasElement)) return;
