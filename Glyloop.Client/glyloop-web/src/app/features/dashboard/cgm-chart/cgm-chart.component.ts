@@ -14,6 +14,7 @@ import {
   Chart,
   ChartConfiguration,
   ChartData,
+  ChartEvent,
   TimeSeriesScale,
   LinearScale,
   LineController,
@@ -90,6 +91,11 @@ export class CgmChartComponent implements OnDestroy {
   // Crosshair state
   private crosshairPosition: { x: number; y: number } | null = null;
 
+  // Overlay points (kept in component state to avoid typing issues with Chart.js datasets)
+  private overlayPointsState: NormalizedOverlayPoint[] = [];
+  // Overlay points grouped per dataset (aligned with scatter datasets order)
+  private overlayDatasetMeta: NormalizedOverlayPoint[][] = [];
+
   // Localized strings
   readonly glucoseLabel = $localize`:@@dashboard.chart.glucoseLabel:Glucose (mg/dL)`;
   readonly noDataMessage = $localize`:@@dashboard.chart.noData:No glucose data available for this time range`;
@@ -142,7 +148,8 @@ export class CgmChartComponent implements OnDestroy {
         responsive: true,
         maintainAspectRatio: true,
         interaction: {
-          mode: 'index',
+          mode: 'nearest',
+          axis: 'x',
           intersect: false
         },
         plugins: {
@@ -154,7 +161,10 @@ export class CgmChartComponent implements OnDestroy {
             enabled: true,
             callbacks: {
               title: (context) => {
-                const xValue = context[0].parsed.x;
+                // Prefer the hovered scatter point (event) if present
+                const preferred =
+                  context.find((c) => (c.dataset as any).type === 'scatter') ?? context[0];
+                const xValue = preferred?.parsed?.x;
                 if (xValue === null || xValue === undefined) return '';
                 const date = new Date(xValue);
                 return date.toLocaleString();
@@ -214,6 +224,8 @@ export class CgmChartComponent implements OnDestroy {
   private prepareChartData(data: ChartDataResponseDto): ChartData {
     const glucosePoints = this.buildGlucosePoints(data).sort((a, b) => a.epochMs - b.epochMs);
     const overlayPoints = this.buildOverlayPoints(data).sort((a, b) => a.epochMs - b.epochMs);
+    // Keep overlay points in sync with dataset order
+    this.overlayPointsState = overlayPoints;
 
     // Glucose line dataset
     const glucoseData = glucosePoints.map((point) => ({
@@ -221,20 +233,52 @@ export class CgmChartComponent implements OnDestroy {
       y: point.value
     }));
 
-    // Event overlay scatter dataset
-    const overlayData = overlayPoints.map((overlay) => {
-      const yValue = this.getGlucoseValueAt(overlay.epochMs, glucosePoints) ?? 200;
+    // Event overlay scatter datasets grouped by event type to get distinct legend entries/colors
+    const eventTypeColors: Record<string, string> = {
+      Food: '#fb923c',
+      Insulin: '#5B8DEF',
+      Exercise: '#10b981',
+      Note: '#a855f7'
+    };
+    const overlayByType = new Map<string, NormalizedOverlayPoint[]>();
+    for (const point of overlayPoints) {
+      const type = point.eventType ?? 'Other';
+      if (!overlayByType.has(type)) {
+        overlayByType.set(type, []);
+      }
+      overlayByType.get(type)!.push(point);
+    }
 
-      return {
-        x: overlay.epochMs,
-        y: yValue,
-        eventId: overlay.eventId,
-        type: overlay.eventType,
-        eventType: overlay.eventType,
-        icon: overlay.icon,
-        color: overlay.color
-      };
+    const eventTypesOrder = ['Food', 'Insulin', 'Exercise', 'Note'];
+    const sortedTypes = Array.from(overlayByType.keys()).sort((a, b) => {
+      const ia = eventTypesOrder.indexOf(a);
+      const ib = eventTypesOrder.indexOf(b);
+      if (ia === -1 && ib === -1) return a.localeCompare(b);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
     });
+
+    const overlayDatasets: ChartData['datasets'] = [];
+    this.overlayDatasetMeta = [];
+    for (const type of sortedTypes) {
+      const pointsForType = overlayByType.get(type)!;
+      this.overlayDatasetMeta.push(pointsForType);
+      const datasetData = pointsForType.map((overlay) => {
+        const yValue = this.getGlucoseValueAt(overlay.epochMs, glucosePoints) ?? 200;
+        return { x: overlay.epochMs, y: yValue };
+      });
+      const color = eventTypeColors[type] ?? '#ff6384';
+      overlayDatasets.push({
+        type: 'scatter',
+        label: type,
+        data: datasetData,
+        backgroundColor: color,
+        pointRadius: 8,
+        pointHoverRadius: 10,
+        pointStyle: 'circle'
+      } as never);
+    }
 
     const thresholdDatasets = this.buildThresholdDatasets(glucosePoints, data);
 
@@ -253,15 +297,7 @@ export class CgmChartComponent implements OnDestroy {
           spanGaps: false, // Show breaks for null values
           fill: true
         },
-        {
-          type: 'scatter',
-          label: 'Events',
-          data: overlayData,
-          backgroundColor: overlayData.map((d: NormalizedOverlayPoint) => d.color ?? '#ff6384'),
-          pointRadius: 8,
-          pointHoverRadius: 10,
-          pointStyle: 'circle'
-        } as never,
+        ...overlayDatasets,
         ...thresholdDatasets
       ]
     };
@@ -413,14 +449,13 @@ export class CgmChartComponent implements OnDestroy {
   private updateHighlight(eventId: string | undefined): void {
     if (!this.chart) return;
 
-    const overlayDataset = this.chart.data.datasets[1] as { data: NormalizedOverlayPoint[]; pointRadius?: number[] };
-    if (!overlayDataset) return;
-
-    // Reset all point radii
-    const radii = overlayDataset.data.map((point: NormalizedOverlayPoint) =>
-      point.eventId === eventId ? 12 : 8
-    );
-    overlayDataset.pointRadius = radii;
+    // Recompute point radii per overlay dataset based on selected event id
+    for (let i = 0; i < this.overlayDatasetMeta.length; i++) {
+      const meta = this.overlayDatasetMeta[i];
+      const radii = meta.map((point) => (point.eventId === eventId ? 12 : 8));
+      const datasetIndex = 1 + i; // after glucose dataset
+      (this.chart.data.datasets[datasetIndex] as any).pointRadius = radii;
+    }
 
     this.chart.update('none');
   }
@@ -434,27 +469,32 @@ export class CgmChartComponent implements OnDestroy {
     const element = elements[0];
     const datasetIndex = element.datasetIndex;
 
-    // Check if clicked on overlay (events) dataset
-    if (datasetIndex === 1) {
+    // Check if clicked on overlay (events) datasets (which come right after the glucose dataset)
+    const firstOverlayDatasetIndex = 1;
+    const lastOverlayDatasetIndex = firstOverlayDatasetIndex + this.overlayDatasetMeta.length - 1;
+    if (datasetIndex >= firstOverlayDatasetIndex && datasetIndex <= lastOverlayDatasetIndex) {
+      const overlayGroupIndex = datasetIndex - firstOverlayDatasetIndex;
       const dataIndex = element.index;
-      const point = this.chart?.data.datasets[1].data[dataIndex] as NormalizedOverlayPoint;
-
-      if (point?.eventId) {
-        this.eventSelect.emit(point.eventId);
-      }
+      const meta = this.overlayDatasetMeta[overlayGroupIndex]?.[dataIndex];
+      if (meta?.eventId) this.eventSelect.emit(meta.eventId);
     }
   }
 
   /**
    * Handles chart hover for crosshair
    */
-  private handleChartHover(event: { native?: { target: HTMLCanvasElement; clientX: number; clientY: number } }): void {
-    if (!this.chart || !event.native) return;
+  private handleChartHover(event: ChartEvent): void {
+    if (!this.chart) return;
+    // Ensure we have a mouse event on a canvas
+    const nativeEvt = (event as any).native as Event | null | undefined;
+    if (!(nativeEvt instanceof MouseEvent)) return;
+    const target = nativeEvt.target;
+    if (!(target instanceof HTMLCanvasElement)) return;
 
     // Get relative position manually
-    const rect = event.native.target.getBoundingClientRect();
-    const x = event.native.clientX - rect.left;
-    const y = event.native.clientY - rect.top;
+    const rect = target.getBoundingClientRect();
+    const x = nativeEvt.clientX - rect.left;
+    const y = nativeEvt.clientY - rect.top;
     this.crosshairPosition = { x, y };
 
     // Find nearest point
@@ -558,10 +598,9 @@ export class CgmChartComponent implements OnDestroy {
     if (!glucosePoint?.x) return;
 
     const currentTime = glucosePoint.x;
-    const overlayDataset = this.chart.data.datasets[1];
 
     // Find event marker at or near current time
-    for (const point of overlayDataset.data as NormalizedOverlayPoint[]) {
+    for (const point of this.overlayPointsState) {
       if (Math.abs(point.epochMs - currentTime) < 60000) {
         // Within 1 minute
         if (point.eventId) {

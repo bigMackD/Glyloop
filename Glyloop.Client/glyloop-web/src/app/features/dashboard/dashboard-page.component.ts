@@ -217,9 +217,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     this.chartDataService.fetchChartData(range).subscribe();
     this.chartDataService.fetchTir(range).subscribe();
 
-    // Refresh history (maintain current filters but refetch)
-    // The HistoryPanelComponent will handle this through its service subscription
-    this.eventsService.list(this.historyFilters()).subscribe();
+    // Refresh history by nudging filters signal reference
+    const current = this.historyFilters();
+    this.historyFilters.set({ ...current });
   }
 
   /**
@@ -228,7 +228,8 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   private handleChartError(err: { status?: number }): void {
     console.error('Chart data error:', err);
 
-    if (err.status === 429 || err.status >= 500) {
+    const status = err?.status;
+    if (status === 429 || (typeof status === 'number' && status >= 500)) {
       // Rate limit or server error - trigger backoff
       const nextRetryAt = new Date(Date.now() + 60000); // Retry in 1 minute
       this.dashboardState.setPollState({

@@ -29,7 +29,7 @@
         <!-- Event Details Drawer with List -->
         <app-event-details-drawer
           [event]="selectedEvent()"
-          (close)="onDetailsClose()"
+          (closeDrawer)="onDetailsClose()"
         >
           <app-history-virtual-list
             [items]="events()"

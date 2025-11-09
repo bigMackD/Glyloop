@@ -27,6 +27,20 @@
       <mat-tab [label]="foodTab" data-testid="food-tab">
         <form [formGroup]="foodForm" class="event-form" data-testid="food-form">
           <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ eventTimeLabel }}</mat-label>
+            <input
+              matInput
+              type="datetime-local"
+              formControlName="eventTime"
+              [attr.aria-label]="eventTimeLabel"
+              data-testid="food-event-time-input"
+            />
+            @if (foodForm.controls.eventTime.hasError('required')) {
+              <mat-error>{{ eventTimeRequiredLabel }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ carbsLabel }}</mat-label>
             <input
               matInput
@@ -85,6 +99,20 @@
       <!-- Insulin Tab -->
       <mat-tab [label]="insulinTab" data-testid="insulin-tab">
         <form [formGroup]="insulinForm" class="event-form" data-testid="insulin-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ eventTimeLabel }}</mat-label>
+            <input
+              matInput
+              type="datetime-local"
+              formControlName="eventTime"
+              [attr.aria-label]="eventTimeLabel"
+              data-testid="insulin-event-time-input"
+            />
+            @if (insulinForm.controls.eventTime.hasError('required')) {
+              <mat-error>{{ eventTimeRequiredLabel }}</mat-error>
+            }
+          </mat-form-field>
+
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ insulinTypeLabel }}</mat-label>
             <mat-select formControlName="insulinType" data-testid="insulin-type-select">
@@ -167,6 +195,20 @@
       <mat-tab [label]="exerciseTab" data-testid="exercise-tab">
         <form [formGroup]="exerciseForm" class="event-form" data-testid="exercise-form">
           <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ eventTimeLabel }}</mat-label>
+            <input
+              matInput
+              type="datetime-local"
+              formControlName="eventTime"
+              [attr.aria-label]="eventTimeLabel"
+              data-testid="exercise-event-time-input"
+            />
+            @if (exerciseForm.controls.eventTime.hasError('required')) {
+              <mat-error>{{ eventTimeRequiredLabel }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ exerciseTypeLabel }}</mat-label>
             <mat-select formControlName="exerciseTypeId">
               @for (type of exerciseTypes; track type.id) {
@@ -226,6 +268,20 @@
       <!-- Note Tab -->
       <mat-tab [label]="noteTab" data-testid="note-tab">
         <form [formGroup]="noteForm" class="event-form" data-testid="note-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ eventTimeLabel }}</mat-label>
+            <input
+              matInput
+              type="datetime-local"
+              formControlName="eventTime"
+              [attr.aria-label]="eventTimeLabel"
+              data-testid="note-event-time-input"
+            />
+            @if (noteForm.controls.eventTime.hasError('required')) {
+              <mat-error>{{ eventTimeRequiredLabel }}</mat-error>
+            }
+          </mat-form-field>
+
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ noteLabel }}</mat-label>
             <textarea
