@@ -50,7 +50,7 @@
         <app-history-panel
           [initialFilters]="historyFilters()"
           [selectedEventId]="selectedEventId()"
-          (select)="onHistorySelect($event)"
+          (selectEvent)="onHistorySelect($event)"
           (filtersChange)="onHistoryFiltersChange($event)"
         ></app-history-panel>
       </div>
@@ -58,9 +58,11 @@
   </div>
 
   <!-- Add Event Modal -->
-  <app-add-event-modal
-    [open]="addEventModalOpen()"
-    (close)="closeAddEventModal()"
-    (created)="onEventCreated($event)"
-  ></app-add-event-modal>
+  @if (addEventModalOpen()) {
+    <app-add-event-modal
+      [open]="true"
+      (closeModal)="closeAddEventModal()"
+      (created)="onEventCreated()"
+    ></app-add-event-modal>
+  }
 </div>

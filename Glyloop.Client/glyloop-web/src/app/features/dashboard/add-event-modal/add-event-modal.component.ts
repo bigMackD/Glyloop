@@ -51,8 +51,18 @@ export class AddEventModalComponent {
   readonly isSubmitting = signal<boolean>(false);
   readonly error = signal<string | undefined>(undefined);
 
+  /**
+   * Returns a datetime-local formatted string for "now" (YYYY-MM-DDTHH:mm)
+   */
+  private getNowLocalDateTime(): string {
+    const d = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
   // Forms
   readonly foodForm = this.fb.group({
+    eventTime: [this.getNowLocalDateTime(), [Validators.required]],
     carbohydratesGrams: [
       null as number | null,
       [Validators.required, Validators.min(0), Validators.max(300)]
@@ -63,6 +73,7 @@ export class AddEventModalComponent {
   });
 
   readonly insulinForm = this.fb.group({
+    eventTime: [this.getNowLocalDateTime(), [Validators.required]],
     insulinType: ['Fast', Validators.required],
     insulinUnits: [
       null as number | null,
@@ -75,6 +86,7 @@ export class AddEventModalComponent {
   });
 
   readonly exerciseForm = this.fb.group({
+    eventTime: [this.getNowLocalDateTime(), [Validators.required]],
     exerciseTypeId: [null as number | null, Validators.required],
     durationMinutes: [
       null as number | null,
@@ -85,6 +97,7 @@ export class AddEventModalComponent {
   });
 
   readonly noteForm = this.fb.group({
+    eventTime: [this.getNowLocalDateTime(), [Validators.required]],
     noteText: ['', [Validators.required, Validators.maxLength(500)]]
   });
 
@@ -139,6 +152,10 @@ export class AddEventModalComponent {
   readonly intensityLabel = $localize`:@@dashboard.addEvent.exercise.intensity:Intensity`;
   readonly exerciseNoteLabel = $localize`:@@dashboard.addEvent.exercise.note:Note`;
 
+  // Common date & time label
+  readonly eventTimeLabel = $localize`:@@dashboard.addEvent.eventTime:Date & Time`;
+  readonly eventTimeRequiredLabel = $localize`:@@dashboard.addEvent.eventTime.required:Date & time are required`;
+
   /**
    * Handles tab change and resets forms
    */
@@ -153,12 +170,14 @@ export class AddEventModalComponent {
    */
   private resetAllForms(): void {
     this.foodForm.reset({
+      eventTime: this.getNowLocalDateTime(),
       carbohydratesGrams: null,
       mealTagId: null,
       absorptionHint: '',
       note: ''
     });
     this.insulinForm.reset({
+      eventTime: this.getNowLocalDateTime(),
       insulinType: 'Fast',
       insulinUnits: null,
       preparation: '',
@@ -167,12 +186,14 @@ export class AddEventModalComponent {
       note: ''
     });
     this.exerciseForm.reset({
+      eventTime: this.getNowLocalDateTime(),
       exerciseTypeId: null,
       durationMinutes: null,
       intensity: '',
       note: ''
     });
     this.noteForm.reset({
+      eventTime: this.getNowLocalDateTime(),
       noteText: ''
     });
   }
@@ -213,7 +234,7 @@ export class AddEventModalComponent {
 
     const value = this.foodForm.value;
     const payload = {
-      eventTime: new Date().toISOString(),
+      eventTime: new Date(value.eventTime!).toISOString(),
       carbohydratesGrams: value.carbohydratesGrams!,
       mealTagId: value.mealTagId ?? undefined,
       absorptionHint: value.absorptionHint || undefined,
@@ -250,7 +271,7 @@ export class AddEventModalComponent {
 
     const value = this.insulinForm.value;
     const payload = {
-      eventTime: new Date().toISOString(),
+      eventTime: new Date(value.eventTime!).toISOString(),
       insulinType: value.insulinType!,
       insulinUnits: value.insulinUnits!,
       preparation: value.preparation || undefined,
@@ -289,7 +310,7 @@ export class AddEventModalComponent {
 
     const value = this.exerciseForm.value;
     const payload = {
-      eventTime: new Date().toISOString(),
+      eventTime: new Date(value.eventTime!).toISOString(),
       exerciseTypeId: value.exerciseTypeId!,
       durationMinutes: value.durationMinutes!,
       intensity: value.intensity || undefined,
@@ -326,7 +347,7 @@ export class AddEventModalComponent {
 
     const value = this.noteForm.value;
     const payload = {
-      eventTime: new Date().toISOString(),
+      eventTime: new Date(value.eventTime!).toISOString(),
       noteText: value.noteText!
     };
 
